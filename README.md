@@ -21,4 +21,4 @@
 
 ## Categories
 
-- ❌ CRUD
+- ✅ CRUD

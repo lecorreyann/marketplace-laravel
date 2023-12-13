@@ -8,7 +8,6 @@ use App\Http\Requests\SignUpRequest;
 use Illuminate\Contracts\View\View;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Str;
 
 class SignUpController extends Controller
 {

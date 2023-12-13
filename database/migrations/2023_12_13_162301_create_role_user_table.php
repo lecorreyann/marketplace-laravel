@@ -12,20 +12,19 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('users', function (Blueprint $table) {
+    Schema::create('role_user', function (Blueprint $table) {
       $table->id();
-      $table->string('first_name');
-      $table->string('last_name');
-      $table->string('email')->unique();
-      $table->timestamp('email_verified_at')->nullable();
-      $table->string('password');
+      // user_id
+      $table->foreignId('user_id')->constrained()->onDelete('cascade');
+      // role_id
+      $table->foreignId('role_id')->constrained()->onDelete('cascade');
       $table->timestamps();
       $table->softDeletes();
     });
 
     // Insert rows during migration
     Artisan::call('db:seed', [
-      '--class' => 'UserSeeder',
+      '--class' => 'RoleUserSeeder',
     ]);
   }
 
@@ -34,6 +33,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('users');
+    Schema::dropIfExists('role_user');
   }
 };

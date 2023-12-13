@@ -12,7 +12,7 @@
             <form action="{{ route('auth.verify_email.store') }}" method="post">
                 @csrf
                 <x-forms.input type="email" name="email" label="Email"
-                    value="{{ old('email', app()->environment('local') ? 'yannlc@posteo.net' : '') }}" required="true"
+                    value="{{ old('email', app()->environment('local') ? env('DEMO_EMAIL') : '') }}" required="true"
                     autocomplete="email" />
                 <button type="submit">Resend verification link</button>
             </form>

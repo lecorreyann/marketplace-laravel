@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SignInRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-
+use Illuminate\Support\Facades\Auth;
 
 class SignInController extends Controller
 {
@@ -25,7 +25,13 @@ class SignInController extends Controller
    * @param SignInRequest $request
    * @return RedirectResponse
    */
-  public function store(SignInRequest $request): void
+  public function store(SignInRequest $request): RedirectResponse
   {
+    // attempt to authenticate user
+    if (Auth::attempt($request->only('email', 'password'))) {
+      $request->session()->regenerate();
+    }
+    // authentication passed
+    return redirect()->intended(route('home'));
   }
 }

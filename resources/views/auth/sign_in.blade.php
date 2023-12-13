@@ -8,11 +8,11 @@
             @csrf
             {{-- user.email --}}
             <x-forms.input type="email" name="email" label="Email"
-                value="{{ old('email', app()->environment('local') ? 'yannlc@posteo.net' : '') }}" required="true"
+                value="{{ old('email', app()->environment('local') ? env('DEMO_EMAIL') : '') }}" required="true"
                 autocomplete="email" />
             {{-- user.password --}}
             <x-forms.input type="password" name="password" label="Password" required="true"
-                @env('local') value="12345678" @endenv />
+                value="{{ app()->environment('local') ? env('DEMO_PASSWORD') : '' }}" />
             {{-- forgot password --}}
             <a href="{{ route('auth.forgot_password.index') }}">Forgot password?</a>
             {{-- remember me --}}

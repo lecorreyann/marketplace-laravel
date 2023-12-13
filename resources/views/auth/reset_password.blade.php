@@ -10,10 +10,11 @@
             @csrf
             @method('PATCH')
             {{-- user.password --}}
-            <x-forms.input type="password" name="password" label="Password" required="true" value="12345678" />
+            <x-forms.input type="password" name="password" label="Password" required="true"
+                value="{{ app()->environment('local') ? env('DEMO_PASSWORD') : '' }}" />
             {{-- user.password confirmed --}}
             <x-forms.input type="password" name="password_confirmation" label="Password confirmation" required="true"
-                value="12345678" />
+                value="{{ app()->environment('local') ? env('DEMO_PASSWORD') : '' }}" />
 
             <button type="submit">Reset password</button>
         </form>

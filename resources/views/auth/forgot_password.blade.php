@@ -13,7 +13,7 @@
             @csrf
             {{-- user.email --}}
             <x-forms.input type="email" name="email" label="Email"
-                value="{{ old('email', app()->environment('local') ? 'yannlc@posteo.net' : '') }}" required="true"
+                value="{{ old('email', app()->environment('local') ? env('DEMO_EMAIL') : '') }}" required="true"
                 autocomplete="email" />
             <button type="submit">Forgot password</button>
         </form>
