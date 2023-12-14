@@ -16,8 +16,8 @@
 
 ## Roles & Permissions
 
-- ❌ Roles
-- ❌ Permissions
+- ✅ Roles
+- ✅ Permissions
 
 ## Categories
 

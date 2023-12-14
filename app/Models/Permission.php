@@ -12,6 +12,15 @@ class Permission extends Model
   use HasFactory, SoftDeletes;
 
   /**
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
+  protected $fillable = [
+    'name'
+  ];
+
+  /**
    * The roles that belong to the permission.
    */
   public function roles(): BelongsToMany

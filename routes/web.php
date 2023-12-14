@@ -13,11 +13,23 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 // Category Controllers
 use App\Http\Controllers\Category\CRUDController as CategoryCRUDController;
 
+// Role Controllers
+use App\Http\Controllers\Role\CRUDController as RoleCRUDController;
+
+// Permission Controllers
+use App\Http\Controllers\Permission\CRUDController as PermissionCRUDController;
+use App\Http\Middleware\EnsureCategoryExists;
+use App\Http\Middleware\EnsureRoleExists;
+use App\Http\Middleware\EnsurePermissionExists;
 use App\Http\Middleware\EnsureVerificationEmailTokenIsValid;
 use App\Http\Middleware\EnsurePasswordResetTokenIsValid;
+use App\Http\Middleware\EnsurePermissionIsNotLocked;
+use App\Http\Middleware\EnsureRoleIsNotLocked;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Models\Category;
+use App\Models\Role;
+use App\Models\Permission;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,12 +108,34 @@ Route::name('admin.')->prefix('/admin')->group(function () {
   // Category Routes (CRUD)
   Route::middleware([])->group(function () {
     Route::get('/categories', [CategoryCRUDController::class, 'index'])->name('categories.index');
-    Route::name('category.')->prefix('/category')->group(function () {
+    Route::name('category.')->prefix('/categories')->group(function () {
       Route::get('/create', [CategoryCRUDController::class, 'create'])->name('create')->can('create', Category::class);
       Route::post('/store', [CategoryCRUDController::class, 'store'])->name('store');
-      Route::get('/{category}/edit', [CategoryCRUDController::class, 'edit'])->name('edit');
-      Route::patch('/{category}/update', [CategoryCRUDController::class, 'update'])->name('update');
+      Route::get('/{category}/edit', [CategoryCRUDController::class, 'edit'])->middleware(EnsureCategoryExists::class)->name('edit');
+      Route::patch('/{category}/update', [CategoryCRUDController::class, 'update'])->middleware(EnsureCategoryExists::class)->name('update');
       Route::delete('/{category}/destroy', [CategoryCRUDController::class, 'destroy'])->name('destroy');
+    });
+  });
+  // Role Routes (CRUD)
+  Route::middleware([])->group(function () {
+    Route::get('/roles', [RoleCRUDController::class, 'index'])->name('roles.index');
+    Route::name('role.')->prefix('/roles')->group(function () {
+      Route::get('/create', [RoleCRUDController::class, 'create'])->name('create')->can('create', Role::class);
+      Route::post('/store', [RoleCRUDController::class, 'store'])->name('store');
+      Route::get('/{role}/edit', [RoleCRUDController::class, 'edit'])->middleware([EnsureRoleExists::class, EnsureRoleIsNotLocked::class])->name('edit');
+      Route::patch('/{role}/update', [RoleCRUDController::class, 'update'])->middleware(EnsureRoleExists::class, EnsureRoleIsNotLocked::class)->name('update');
+      Route::delete('/{role}/destroy', [RoleCRUDController::class, 'destroy'])->name('destroy');
+    });
+  });
+  // Permission Routes (CRUD)
+  Route::middleware([])->group(function () {
+    Route::get('/permissions', [PermissionCRUDController::class, 'index'])->name('permissions.index');
+    Route::name('permission.')->prefix('/permissions')->group(function () {
+      Route::get('/create', [PermissionCRUDController::class, 'create'])->name('create')->can('create', Permission::class);
+      Route::post('/store', [PermissionCRUDController::class, 'store'])->name('store');
+      Route::get('/{permission}/edit', [PermissionCRUDController::class, 'edit'])->middleware([EnsurePermissionExists::class, EnsurePermissionIsNotLocked::class])->name('edit');
+      Route::patch('/{permission}/update', [PermissionCRUDController::class, 'update'])->middleware([EnsurePermissionExists::class, EnsurePermissionIsNotLocked::class])->name('update');
+      Route::delete('/{permission}/destroy', [PermissionCRUDController::class, 'destroy'])->name('destroy');
     });
   });
 });
