@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
       'email' => env('SUPER_ADMIN_EMAIL'),
       'password' => Hash::make(env('SUPER_ADMIN_PASSWORD')),
       'created_at' => now(),
+      'email_verified_at' => now(),
     ]);
   }
 }

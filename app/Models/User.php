@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use \Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use \Staudenmeir\EloquentHasManyDeep\HasRelationships;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -152,5 +153,21 @@ class User extends Authenticatable implements MustVerifyEmail
   public function hasOnePermissionOf(array $permissions): bool
   {
     return $this->permissions()->whereIn('permissions.name', $permissions)->exists();
+  }
+
+  /**
+   * Get the company that owns the user.
+   */
+  public function company(): HasOne
+  {
+    return $this->hasOne(Company::class);
+  }
+
+  /**
+   * Get the addresses associated with the company.
+   */
+  public function addresses(): HasMany
+  {
+    return $this->hasMany(Address::class);
   }
 }

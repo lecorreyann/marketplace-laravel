@@ -12,19 +12,21 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('permission_role', function (Blueprint $table) {
+    Schema::create('countries', function (Blueprint $table) {
       $table->id();
-      // role_id
-      $table->foreignId('role_id')->constrained()->onDelete('cascade');
-      // permission_id
-      $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+      // name
+      $table->string('name')->unique();
+      // code (ISO 3166-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+      $table->string('iso_3166-1_alpha-2')->unique();
+      // activated
+      $table->boolean('activated')->default(false);
       $table->timestamps();
       $table->softDeletes();
     });
 
     // Insert rows during migration
     Artisan::call('db:seed', [
-      '--class' => 'PermissionRoleSeeder',
+      '--class' => 'CountrySeeder',
     ]);
   }
 
@@ -33,6 +35,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('permission_role');
+    Schema::dropIfExists('countries');
   }
 };

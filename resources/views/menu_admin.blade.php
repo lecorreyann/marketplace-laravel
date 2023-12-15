@@ -30,5 +30,11 @@
                 auth()->user()->can('create permission'))
             <li><a href="{{ route('admin.permission.create') }}">Create Permission</a></li>
         @endif
+
+        {{-- Countries --}}
+        @if (auth()->user()->hasOneRoleOf(['super admin', 'admin']) ||
+                auth()->user()->can('view countries'))
+            <li><a href="{{ route('admin.countries.index') }}">Countries</a></li>
+        @endif
     </ul>
 @endauth

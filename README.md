@@ -7,18 +7,57 @@
 - ✅ Sign In
 - ✅ Forgot Password
 - ✅ Reset Password
+- ✅ Middlewares
 
-## Oauth
+## Oauth (we don't need API yet)
 
 - ❌ Acess token
 - ❌ Refresh token
 - ❌ Client
 
-## Roles & Permissions
+## 💚 Roles
 
-- ✅ Roles
-- ✅ Permissions
+- ✅ CRUD (Admin)
+- ✅ Middlewares
+- ✅ Policy
 
-## Categories
+## 💚 Permissions
 
-- ✅ CRUD
+- ✅ CRUD (Admin)
+- ✅ Middlewares
+- ✅ Policy
+
+## 💚 Categories
+
+- ✅ CRUD (Admin)
+- ✅ Middlewares
+- ✅ Policy
+
+## Product
+
+- ❌ CRUD (Public)
+- ❌ CRUD (Admin)
+- ❌ Middlewares
+- ❌ Policy
+
+## Company
+
+- ❌ CRUD (Public)
+- ❌ Middlewares
+- ❌ Policy
+
+## Address
+
+- ❌ Company (b2c, b2b) (Public)
+- ❌ User (billing, shipping) (Public)
+- ❌ City
+
+## 💚 Country
+
+- ✅ CRUD (Admin)
+- ✅ Middlewares
+- ✅ Policy
+
+## 💚 City
+
+- ❌ Inside address form

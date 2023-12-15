@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Role;
 
 class PermissionPolicy
 {
@@ -21,7 +20,14 @@ class PermissionPolicy
    */
   public function create(User $user): bool
   {
-    $role = Role::where('name', 'admin')->first();
     return $user->hasOneRoleOf(['super admin', 'admin']) || $user->hasPermission('create permission');
+  }
+
+  /**
+   * Determine user can update permision.
+   */
+  public function update(User $user): bool
+  {
+    return $user->hasOneRoleOf(['super admin', 'admin']) || $user->hasPermission('update permission');
   }
 }

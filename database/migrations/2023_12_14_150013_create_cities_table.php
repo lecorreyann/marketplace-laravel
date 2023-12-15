@@ -11,17 +11,17 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('categories', function (Blueprint $table) {
+    Schema::create('cities', function (Blueprint $table) {
       $table->id();
       // name
       $table->string('name');
-      // slug
-      $table->string('slug')->unique()->index();
-      // description
-      $table->text('description')->nullable();
-      $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('cascade');
+      // has one country
+      $table->foreignId('country_id')->constrained();
+      // postal code (including letters, zip code etc.)
+      $table->string('postal_code');
+      // activated
+      $table->boolean('activated')->default(true);
       $table->timestamps();
-      $table->softDeletes();
     });
   }
 
@@ -30,6 +30,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('categories');
+    Schema::dropIfExists('cities');
   }
 };

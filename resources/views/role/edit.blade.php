@@ -12,10 +12,10 @@
                 <x-forms.input type="text" name="name" label="Name" value="{{ old('name', $role->name) }}"
                     required="true" />
                 {{-- role.permissions --}}
+
                 @foreach ($permissions as $permission)
                     <x-forms.checkbox name="permissions[]" id="{{ $permission->id }}" label="{{ $permission->name }}"
-                        value="{{ $permission->id }}"
-                        checked="{{ $role->hasPermission($permission->name) ? true : false }}" />
+                        value="{{ $permission->id }}" :checked="$role->hasPermission($permission->name) ? true : false" />
                 @endforeach
                 <button type="submit">Edit</button>
             </form>
