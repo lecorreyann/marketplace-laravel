@@ -1,4 +1,6 @@
-<x-layouts.layout>
+<x-marketplace-layout>
+
+    {{-- if error --}}
 
 
     {{-- if success --}}
@@ -9,4 +11,4 @@
     @endif
 
 
-</x-layouts.layout>
+</x-marketplace-layout>

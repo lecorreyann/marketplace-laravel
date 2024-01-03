@@ -12,6 +12,15 @@ return new class extends Migration
    */
   public function up(): void
   {
+    if (
+      !env('SUPER_ADMIN_LAST_NAME') ||
+      !env('SUPER_ADMIN_FIRST_NAME') ||
+      !env('SUPER_ADMIN_EMAIL') ||
+      !env('SUPER_ADMIN_PASSWORD')
+    ) {
+      throw new \Exception('Super admin user not configured. You must set SUPER_ADMIN_LAST_NAME, SUPER_ADMIN_FIRST_NAME, SUPER_ADMIN_EMAIL, and SUPER_ADMIN_PASSWORD in your .env file.');
+    }
+
     Schema::create('users', function (Blueprint $table) {
       $table->id();
       // first name

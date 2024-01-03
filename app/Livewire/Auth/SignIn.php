@@ -1,0 +1,76 @@
+<?php
+
+/**
+ * Namespace for the authentication related Livewire components.
+ */
+
+namespace App\Livewire\Auth;
+
+/**
+ * Importing required classes and components.
+ */
+
+use App\Http\Requests\SignInRequest;
+use Livewire\Component;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Auth;
+
+/**
+ * SignIn component class.
+ * This class is responsible for handling user sign in.
+ */
+class SignIn extends Component
+{
+  /**
+   * @var string $email The email of the user. This field is required, must be a valid email, and unique among users.
+   */
+  public $email;
+
+  /**
+   * @var string $password The password of the user. This field is required.
+   */
+  public $password;
+
+
+  /**
+   * Get the validation rules for the sign in request.
+   *
+   * @return array The validation rules.
+   */
+  public function rules()
+  {
+    // create sign in request
+    $request = new SignInRequest();
+
+    // merge email and password (Livewire does not support nested data binding)
+    $request->merge([
+      'email' => $this->email,
+      'password' => $this->password
+    ]);
+
+    // return rules
+    return $request->rules();
+  }
+
+  /**
+   * Store the authenticated user in the session.
+   * This method resets the error bag, attempts to authenticate the user, regenerates the session, and redirects to the home route.
+   *
+   * @return redirect Redirect to the home route.
+   */
+  public function store()
+  {
+    // reset error bag
+    $this->resetErrorBag();
+
+    // validate input
+    $this->validate();
+
+    // attempt to authenticate user
+    if (Auth::attempt($this->only('email', 'password'))) {
+      session()->regenerate();
+    }
+    // authentication passed
+    return redirect()->intended(route('home'));
+  }
+}

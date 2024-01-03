@@ -32,11 +32,12 @@ use App\Http\Middleware\EnsurePermissionIsNotLocked;
 use App\Http\Middleware\EnsureRoleIsNotLocked;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Livewire\Auth\SignIn;
+use App\Livewire\Auth\SignUp;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\Country;
-
 
 
 /*
@@ -69,11 +70,12 @@ Route::name('auth.')->group(function () {
   // unauthenticated routes
   Route::middleware(RedirectIfAuthenticated::class)->group(function () {
     // sign up
-    Route::get('/sign-up', [SignUpController::class, 'index'])->name('sign_up.index');
-    Route::post('/sign-up', [SignUpController::class, 'store'])->name('sign_up.store');
+    Route::get('/sign-up', SignUp::class)->name('sign_up.index');
+    // Route::post('/sign-up', [SignUpController::class, 'store'])->name('sign_up.store');
     // sign in
-    Route::get('/sign-in', [SignInController::class, 'index'])->name('sign_in.index');
-    Route::post('/sign-in', [SignInController::class, 'store'])->name('sign_in.store');
+    // Route::get('/sign-in', [SignInController::class, 'index'])->name('sign_in.index');
+    Route::get('/sign-in', SignIn::class)->name('sign_in.index');
+    Route::post('/sign-in',  SignIn::class)->name('sign_in.store');
     // verify email
     Route::get('/verify-email', [VerifyEmailController::class, 'index'])->middleware(EnsureVerificationEmailTokenIsValid::class)->name('verify_email.index');
     Route::post('/verify-email', [VerifyEmailController::class, 'store'])->name('verify_email.store');
