@@ -4,6 +4,7 @@
     'bg-yellow-50' => isset($alertType) && $alertType === 'warm',
     'bg-green-50' => isset($alertType) && $alertType === 'success',
     'bg-blue-50' => !isset($alertType),
+    $attributes->get('class') ??  null => $attributes->get('class'),
 ])>
     <div class="flex">
         <div class="flex-shrink-0">
@@ -36,7 +37,7 @@
             @endisset
         </div>
         <div class="ml-3">
-            @isset($title)
+            @if(isset($title) && !!$title)
                 <h3 @class([
                     'text-sm font-medium',
                     'text-red-800' => isset($alertType) && $alertType === 'danger',
@@ -44,9 +45,10 @@
                     'text-green-800' => isset($alertType) && $alertType === 'success',
                     'text-blue-800' => !isset($alertType),
                 ])>{{ $title }}</h3>
-            @endisset
+            @endif
             <div @class([
-                'mt-2 text-sm',
+                'text-sm',
+                'mt-2' => isset($title) && !!$title,
                 'text-red-700' => isset($alertType) && $alertType === 'danger',
                 'text-yellow-700' => isset($alertType) && $alertType === 'warm',
                 'text-green-700' => isset($alertType) && $alertType === 'success',

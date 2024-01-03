@@ -3,12 +3,8 @@
 // Path: routes/web.php
 
 // Auth Controllers
-use App\Http\Controllers\Auth\SignUpController;
-use App\Http\Controllers\Auth\SignInController;
 use App\Http\Controllers\Auth\SignOutController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 // Category Controllers
 use App\Http\Controllers\Category\CRUDController as CategoryCRUDController;
@@ -32,8 +28,11 @@ use App\Http\Middleware\EnsurePermissionIsNotLocked;
 use App\Http\Middleware\EnsureRoleIsNotLocked;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Livewire\Auth\ForgotPassword;
+use App\Livewire\Auth\ResetPassword;
 use App\Livewire\Auth\SignIn;
 use App\Livewire\Auth\SignUp;
+use App\Livewire\Auth\VerifyEmail;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\Permission;
@@ -71,21 +70,18 @@ Route::name('auth.')->group(function () {
   Route::middleware(RedirectIfAuthenticated::class)->group(function () {
     // sign up
     Route::get('/sign-up', SignUp::class)->name('sign_up.index');
-    // Route::post('/sign-up', [SignUpController::class, 'store'])->name('sign_up.store');
     // sign in
-    // Route::get('/sign-in', [SignInController::class, 'index'])->name('sign_in.index');
     Route::get('/sign-in', SignIn::class)->name('sign_in.index');
     Route::post('/sign-in',  SignIn::class)->name('sign_in.store');
     // verify email
-    Route::get('/verify-email', [VerifyEmailController::class, 'index'])->middleware(EnsureVerificationEmailTokenIsValid::class)->name('verify_email.index');
-    Route::post('/verify-email', [VerifyEmailController::class, 'store'])->name('verify_email.store');
-    Route::post('/request-verify-email-link', [VerifyEmailController::class, 'store'])->name('verify_email.store');
+    Route::get('/verify-email', VerifyEmail::class)->middleware(EnsureVerificationEmailTokenIsValid::class)->name('verify_email.index');
+    Route::post('/verify-email', VerifyEmail::class)->name('verify_email.store');
     // forgot password
-    Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('forgot_password.index');
-    Route::post('/forgot-password', [ForgotPasswordController::class, 'store'])->name('forgot_password.store');
+    Route::get('/forgot-password', ForgotPassword::class)->name('forgot_password.index');
+    Route::post('/forgot-password', ForgotPassword::class)->name('forgot_password.store');
     // reset password
-    Route::get('/reset-password', [ResetPasswordController::class, 'index'])->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.index');
-    Route::patch('/reset-password', [ResetPasswordController::class, 'update'])->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.update');
+    Route::get('/reset-password', ResetPassword::class)->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.index');
+    Route::patch('/reset-password', ResetPassword::class)->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.update');
   });
 
   // authenticated routes

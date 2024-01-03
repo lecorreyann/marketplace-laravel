@@ -9,7 +9,6 @@ use App\Models\Token;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Events\PasswordReset as PasswordResetEvent;
-use App\Models\User;
 
 class ResetPasswordController extends Controller
 {

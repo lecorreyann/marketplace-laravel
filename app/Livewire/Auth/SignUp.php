@@ -14,9 +14,6 @@ use Livewire\Component;
 use Livewire\Attributes\Validate;
 use App\Models\User;
 use App\Events\AccountCreated as AccountCreatedEvent;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Validation\ValidationException;
 
 /**
  * SignUp component class.

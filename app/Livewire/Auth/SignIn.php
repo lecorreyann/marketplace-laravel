@@ -12,7 +12,6 @@ namespace App\Livewire\Auth;
 
 use App\Http\Requests\SignInRequest;
 use Livewire\Component;
-use Livewire\Attributes\Validate;
 use Illuminate\Support\Facades\Auth;
 
 /**

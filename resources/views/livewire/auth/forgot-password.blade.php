@@ -8,7 +8,7 @@
 
   @else
 
-    <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Log in to your account</h2>
+    <h2 class="mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Get link to reset your password</h2>
 
     @if(session()->has('error') || session()->has('error.title') || session()->has('error.message'))
       <x-alert
@@ -36,36 +36,14 @@
           placeholder="john@doe.com"
         />
 
-        {{-- user.password --}}
-        <x-forms.fields.input
-          label="Password"
-          name="password"
-          id="password"
-          type="password"
-          autocomplete="current-password"
-        />
-
-        <div class="flex items-center justify-between">
-          <div class="flex items-center">
-            <input id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-            <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-900">Remember me</label>
-          </div>
-
-          <div class="text-sm leading-6">
-            <a href="{{ route('auth.forgot_password.index') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
-          </div>
-        </div>
 
         <div>
-          <x-button type="submit" class="flex w-full leading-6 justify-center">Log in</x-button>
+          <x-button type="submit" class="flex w-full leading-6 justify-center">Forgot password</x-button>
         </div>
       </form>
     </div>
 
-    <p class="mt-10 text-center text-sm text-gray-500">
-      Don't have an account?
-      <a href="{{ route('auth.sign_up.index') }}" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign Up</a>
-    </p>
+
   </div>
 
   @endif
