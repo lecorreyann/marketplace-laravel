@@ -23,12 +23,17 @@ class SignIn extends Component
   /**
    * @var string $email The email of the user. This field is required, must be a valid email, and unique among users.
    */
-  public $email;
+  public $email = 'john@doe.com';
 
   /**
    * @var string $password The password of the user. This field is required.
    */
-  public $password;
+  public $password = 'password';
+
+  /**
+   * @var bool $remember Whether to remember the user or not.
+   */
+  public $remember = false;
 
 
   /**
@@ -66,8 +71,16 @@ class SignIn extends Component
     $this->validate();
 
     // attempt to authenticate user
-    if (Auth::attempt($this->only('email', 'password'))) {
+    if (Auth::attempt($this->only('email', 'password'), $this->remember)) {
       session()->regenerate();
+
+      if ($this->remember) {
+        // create a new remember token
+        $remember_token = Auth::user()->generateRememberToken();
+
+        // save remember token in cookie
+        setcookie('remember_me', $remember_token, time() + config('token.remeber_token.expires_in'), '/');
+      }
     }
     // authentication passed
     return redirect()->intended(route('home'));

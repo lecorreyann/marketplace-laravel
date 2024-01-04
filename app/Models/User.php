@@ -99,6 +99,58 @@ class User extends Authenticatable implements MustVerifyEmail
   }
 
   /**
+   * Generate new remember token
+   *
+   * @return string The remember token.
+   */
+  public function generateRememberToken(): string
+  {
+    $remember_token = $this->tokens()->create([
+      'type' => 'remember_token',
+      'token' => hash('sha256', random_bytes(32)),
+      'expires_at' => now()->addSeconds(config('token.remember_token.expires_in'))
+    ]);
+
+    return $remember_token->token;
+  }
+
+  /**
+   * Get the remember token associated with the user.
+   */
+  public function rememberToken(): HasOne
+  {
+    return $this->hasOne(Token::class)->where(['type' => 'remember_token', 'revoked_at' => null]);
+  }
+
+  /**
+   * Get the remember token for the user.
+   */
+  public function getRememberToken()
+  {
+    // if remember token is not set
+    if (!$this->rememberToken) {
+      return null;
+    }
+    return $this->rememberToken->token;
+  }
+
+  /**
+   * Get the column name for the "remember me" token.
+   */
+  public function getRememberTokenName(): string
+  {
+    return 'tokens.token';
+  }
+
+  /**
+   * Set the remember token for the user.
+   */
+  public function setRememberToken($value): void
+  {
+    $this->generateRememberToken();
+  }
+
+  /**
    * The roles that belong to the user.
    */
   public function roles(): BelongsToMany
