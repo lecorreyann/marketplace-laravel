@@ -15,5 +15,15 @@
     @isset($description) aria-describedby="{{ $id }}-description" @endisset
     @error($name) aria-invalid="true" aria-describedby="{{ $id }}-error" @enderror
     ></textarea>
+
+    @if($errors->missing('form.'.$name) && isset($description))
+    {{-- description --}}
+      <p class="mt-2 text-sm text-gray-500" id="{{ $id }}-description">{{ $description }}</p>
+    @endif
+
+    @error('form.'.$name)
+      {{-- error message --}}
+      <p class="mt-2 text-sm text-red-600" id="{{ $id }}-error" aria-live="assertive">{{ $message }}</p>
+    @enderror
   </div>
 </div>

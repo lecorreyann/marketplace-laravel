@@ -15,11 +15,11 @@ class Select extends Component
   public string $model;
   public string|null $value;
   public string $placeholder;
-  public string $optionText;
-  public string $optionValue;
+  public string $optionText; // the field to use for the option text
+  public string $optionValue; // the field to use for the option value
   public Collection $options;
 
-  public function mount($id, $label, $model, $optionText = 'id', $optionValue = 'id', $placeholder, $name = null, $class = null, $value = null)
+  public function mount($id, $label, $model, $optionText, $optionValue, $placeholder, $name = null, $class = null, $value = null)
   {
     $this->id = $id;
     $this->name = $name;

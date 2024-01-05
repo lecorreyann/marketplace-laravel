@@ -42,7 +42,7 @@
 
   @error('form.'.$name)
     {{-- error message --}}
-    <p class="mt-2 text-sm text-red-600" id="{{ $id }}-error">{{ $message }}</p>
+    <p class="mt-2 text-sm text-red-600" id="{{ $id }}-error" aria-live="assertive">{{ $message }}</p>
   @enderror
 
 </div>
