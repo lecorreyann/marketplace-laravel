@@ -13,30 +13,39 @@ class SignUpForm extends Form
    * @var string $first_name The first name of the user. This field is required.
    */
   #[Validate('required')]
-  public $first_name = 'John';
+  public $first_name;
 
   /**
    * @var string $last_name The last name of the user. This field is required.
    */
   #[Validate('required')]
-  public $last_name = 'Doe';
+  public $last_name;
 
   /**
    * @var string $email The email of the user. This field is required, must be a valid email, and unique among users.
    */
   #[Validate('required|email|unique:users,email')]
-  public $email = 'john@doe.com';
+  public $email;
 
   /**
    * @var string $password The password of the user. This field is required and must be confirmed.
    */
   #[Validate('required|confirmed')]
-  public $password = 'password';
+  public $password;
 
   /**
    * @var string $password_confirmation The password confirmation of the user. This field is required.
    */
-  public $password_confirmation = 'password';
+  public $password_confirmation;
+
+  public function setDemoForm(): void
+  {
+    $this->first_name = env('DEMO_FIRST_NAME', 'John');
+    $this->last_name = env('DEMO_LAST_NAME', 'Doe');
+    $this->email = env('DEMO_EMAIL', 'john@doe.com');
+    $this->password = env('DEMO_PASSWORD', 'password');
+    $this->password_confirmation = env('DEMO_PASSWORD', 'password');
+  }
 
   /**
    * Store the user in the database.

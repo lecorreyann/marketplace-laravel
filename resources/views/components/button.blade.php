@@ -1,7 +1,7 @@
 <button
   type="{{ $type ?? 'button' }}"
   @class([
-    "rounded-md bg-indigo-600 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+    "rounded-md bg-indigo-600 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75",
     "px-2 py-1 text-xs" => $attributes->get('size') === 'xs',
     "px-2 py-1 text-sm" => $attributes->get('size') === 'sm',
     "px-2.5 py-1.5 text-sm" => !$attributes->get('size') || $attributes->get('size') === 'md',

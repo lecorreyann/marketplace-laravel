@@ -14,12 +14,20 @@ class SignInForm extends Form
    */
   #[Validate]
   public $email;
-  public $password = 'password';
+  #[Validate]
+  public $password;
 
   /**
    * @var bool $remember Whether to remember the user or not.
    */
   public $remember = false;
+
+
+  public function setDemoForm(): void
+  {
+    $this->email = env('DEMO_EMAIL', 'john@doe.com');
+    $this->password = env('DEMO_PASSWORD', 'password');
+  }
 
   /**
    * Get the validation rules for the sign in request.

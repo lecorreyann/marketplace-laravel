@@ -14,6 +14,15 @@ class SignIn extends Component
 
   public SignInForm $form;
 
+
+  public function mount(): void
+  {
+    // Set the demo form if the app is running in the local environment
+    if (app()->environment('local')) {
+      $this->form->setDemoForm();
+    }
+  }
+
   /**
    * Store the authenticated user in the session.
    * This method resets the error bag, attempts to authenticate the user, regenerates the session, and redirects to the home route.

@@ -10,6 +10,14 @@ class SignUp extends Component
 
   public SignUpForm $form;
 
+  public function mount(): void
+  {
+    // Set the demo form if the app is running in the local environment
+    if (app()->environment('local')) {
+      $this->form->setDemoForm();
+    }
+  }
+
   public function register()
   {
 

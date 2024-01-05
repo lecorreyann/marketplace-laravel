@@ -1,16 +1,9 @@
 <?php
 
-/**
- * Namespace for the company related Livewire components
- */
-
 namespace App\Livewire\Companies;
 
-/**
- * Importing required classes and components.
- */
-
 use Livewire\Component;
+use App\Livewire\Forms\CreateCompanyForm;
 
 /**
  * CreateCompany component class.
@@ -18,4 +11,5 @@ use Livewire\Component;
  */
 class CreateCompany extends Component
 {
+  public CreateCompanyForm $form;
 }
