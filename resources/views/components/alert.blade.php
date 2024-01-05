@@ -1,14 +1,14 @@
 <div @class([
     'rounded-md p-4',
-    'bg-red-50' => isset($alertType) && $alertType === 'danger',
-    'bg-yellow-50' => isset($alertType) && $alertType === 'warm',
-    'bg-green-50' => isset($alertType) && $alertType === 'success',
-    'bg-blue-50' => !isset($alertType),
+    'bg-red-50' => $alertType === 'danger',
+    'bg-yellow-50' => $alertType === 'warm',
+    'bg-green-50' => $alertType === 'success',
+    'bg-blue-50' => $alertType === 'primary' ,
     $attributes->get('class') ??  null => $attributes->get('class'),
 ])>
     <div class="flex">
         <div class="flex-shrink-0">
-            @isset($alertType)
+
                 @if ($alertType === 'danger')
                     <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                         <path fill-rule="evenodd"
@@ -27,37 +27,36 @@
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
                             clip-rule="evenodd" />
                     </svg>
-                @endif
-            @else
+                @elseif($alertType === 'primary')
                 <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd"
                         d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
                         clip-rule="evenodd" />
                 </svg>
-            @endisset
+              @endif
         </div>
         <div class="ml-3">
-            @if(isset($title) && !!$title)
+            @if(!!$title)
                 <h3 @class([
                     'text-sm font-medium',
-                    'text-red-800' => isset($alertType) && $alertType === 'danger',
-                    'text-yellow-800' => isset($alertType) && $alertType === 'warm',
-                    'text-green-800' => isset($alertType) && $alertType === 'success',
-                    'text-blue-800' => !isset($alertType),
+                    'text-red-800' => $alertType === 'danger',
+                    'text-yellow-800' => $alertType === 'warm',
+                    'text-green-800' => $alertType === 'success',
+                    'text-blue-800' => $alertType === 'primary',
                 ])>{{ $title }}</h3>
             @endif
-            <div @class([
-                'text-sm',
-                'mt-2' => isset($title) && !!$title,
-                'text-red-700' => isset($alertType) && $alertType === 'danger',
-                'text-yellow-700' => isset($alertType) && $alertType === 'warm',
-                'text-green-700' => isset($alertType) && $alertType === 'success',
-                'text-blue-700' => !isset($alertType),
-            ])>
-                @isset($message)
-                    {{ $message }}
-                @endisset
-            </div>
+            @if($slot)
+              <div @class([
+                  'text-sm',
+                  'mt-2' => !!$title,
+                  'text-red-700' => $alertType === 'danger',
+                  'text-yellow-700' => $alertType === 'warm',
+                  'text-green-700' => $alertType === 'success',
+                  'text-blue-700' => $alertType === 'primary',
+              ])>
+                  {{ $slot }}
+              </div>
+            @endif
         </div>
     </div>
 </div>

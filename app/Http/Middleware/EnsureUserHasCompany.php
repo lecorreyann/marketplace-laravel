@@ -16,7 +16,7 @@ class EnsureUserHasCompany
   public function handle(Request $request, Closure $next): Response
   {
     if (!$request->user()->company) {
-      return redirect()->route('company.create');
+      return redirect()->route('companies.create');
     }
     return $next($request);
   }

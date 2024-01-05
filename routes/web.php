@@ -2,9 +2,6 @@
 
 // Path: routes/web.php
 
-// Auth Controllers
-use App\Http\Controllers\Auth\SignOutController;
-
 
 // Category Controllers
 use App\Http\Controllers\Category\CRUDController as CategoryCRUDController;
@@ -22,17 +19,9 @@ use App\Http\Middleware\EnsureCountryExists;
 use App\Http\Middleware\EnsureCategoryExists;
 use App\Http\Middleware\EnsureRoleExists;
 use App\Http\Middleware\EnsurePermissionExists;
-use App\Http\Middleware\EnsureVerificationEmailTokenIsValid;
-use App\Http\Middleware\EnsurePasswordResetTokenIsValid;
 use App\Http\Middleware\EnsurePermissionIsNotLocked;
 use App\Http\Middleware\EnsureRoleIsNotLocked;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\RedirectIfAuthenticated;
-use App\Livewire\Auth\ForgotPassword;
-use App\Livewire\Auth\ResetPassword;
-use App\Livewire\Auth\SignIn;
-use App\Livewire\Auth\SignUp;
-use App\Livewire\Auth\VerifyEmail;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\Permission;
@@ -50,44 +39,18 @@ use App\Models\Country;
 |
 */
 
+// import auth routes
+require __DIR__ . '/auth.php';
+
+// import item routes
+require __DIR__ . '/items.php';
+
+// import company routes
+require __DIR__ . '/companies.php';
+
 Route::get('/', function () {
   return view('home');
 })->name('home');
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Auth Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register auth routes for your application.
-|
-*/
-Route::name('auth.')->group(function () {
-
-  // unauthenticated routes
-  Route::middleware(RedirectIfAuthenticated::class)->group(function () {
-    // sign up
-    Route::get('/sign-up', SignUp::class)->name('sign_up.index');
-    // sign in
-    Route::get('/sign-in', SignIn::class)->name('sign_in.index');
-    Route::post('/sign-in',  SignIn::class)->name('sign_in.store');
-    // verify email
-    Route::get('/verify-email', VerifyEmail::class)->middleware(EnsureVerificationEmailTokenIsValid::class)->name('verify_email.index');
-    Route::post('/verify-email', VerifyEmail::class)->name('verify_email.store');
-    // forgot password
-    Route::get('/forgot-password', ForgotPassword::class)->name('forgot_password.index');
-    Route::post('/forgot-password', ForgotPassword::class)->name('forgot_password.store');
-    // reset password
-    Route::get('/reset-password', ResetPassword::class)->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.index');
-    Route::patch('/reset-password', ResetPassword::class)->middleware(EnsurePasswordResetTokenIsValid::class)->name('reset_password.update');
-  });
-
-  // authenticated routes
-  // sign out
-  Route::delete('/sign-out', [SignOutController::class, 'delete'])->name('sign_out.delete');
-});
 
 
 /*
@@ -100,6 +63,8 @@ Route::name('auth.')->group(function () {
 */
 Route::name('category.')->group(function () {
 });
+
+
 
 
 /*

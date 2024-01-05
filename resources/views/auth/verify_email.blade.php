@@ -1,4 +1,4 @@
-<x-layouts.auth-layout>
+<x-marketplace-layout>
     <div class="container mx-auto">
         @if (session('success'))
             <div>
@@ -21,4 +21,4 @@
         @endif
     </div>
     </div>
-</x-layouts.auth-layout>
+</x-marketplace-layout>

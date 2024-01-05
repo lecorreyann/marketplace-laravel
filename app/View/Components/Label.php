@@ -6,14 +6,14 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Alert extends Component
+class Label extends Component
 {
   /**
    * Create a new component instance.
    */
   public function __construct(
-    public string $alertType = 'primary',
-    public string|null $title = null,
+    public string $for,
+    public string $label
   ) {
     //
   }
@@ -23,6 +23,6 @@ class Alert extends Component
    */
   public function render(): View|Closure|string
   {
-    return view('components.alert');
+    return view('components.forms.label');
   }
 }

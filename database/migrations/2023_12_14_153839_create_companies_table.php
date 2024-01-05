@@ -18,6 +18,8 @@ return new class extends Migration
       // has one address
       $table->foreignId('address_id')->constrained();
       $table->timestamps();
+      // has one user
+      $table->foreignId('user_id')->constrained();
     });
   }
 

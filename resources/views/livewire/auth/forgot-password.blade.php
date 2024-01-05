@@ -14,9 +14,10 @@
       <x-alert
         alert-type="danger"
         title="{{ session()->has('error.title') ? session('error.title') : null }}"
-        message="{{ session()->has('error.message') ? session('error.message') : session('error') }}"
         class="mt-2"
-      />
+      >
+        {{ session()->has('error.message') ? session('error.message') : session('error') }}
+      </x-alert>
     @endif
 
   </div>
@@ -27,7 +28,7 @@
 
 
         {{-- user.email --}}
-        <x-forms.fields.input
+        <x-input
           label="Email"
           name="email"
           id="email"

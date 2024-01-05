@@ -27,12 +27,4 @@ class Company extends Model
   {
     return $this->hasMany(Address::class);
   }
-
-  /**
-   * Get the products associated with the company.
-   */
-  public function products(): HasMany
-  {
-    return $this->hasMany(Product::class);
-  }
 }

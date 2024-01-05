@@ -14,9 +14,10 @@
       <x-alert
         alert-type="danger"
         title="{{ session()->has('error.title') ? session('error.title') : null }}"
-        message="{{ session()->has('error.message') ? session('error.message') : session('error') }}"
         class="mt-2"
-      />
+      >
+        {{ session()->has('error.message') ? session('error.message') : session('error') }}
+      </x-alert>
     @endif
 
   </div>
@@ -27,7 +28,7 @@
 
 
         {{-- user.fist_name --}}
-        <x-forms.fields.input
+        <x-input
           label="First name"
           name="first_name"
           id="first_name"
@@ -37,7 +38,7 @@
         />
 
         {{-- user.last_name --}}
-        <x-forms.fields.input
+        <x-input
           label="Last name"
           name="last_name"
           id="last_name"
@@ -47,7 +48,7 @@
         />
 
         {{-- user.email --}}
-        <x-forms.fields.input
+        <x-input
           label="Email"
           name="email"
           id="email"
@@ -57,7 +58,7 @@
         />
 
         {{-- user.password --}}
-        <x-forms.fields.input
+        <x-input
           label="Password"
           name="password"
           id="password"
@@ -66,7 +67,7 @@
         />
 
         {{-- user.password_confirmation --}}
-        <x-forms.fields.input
+        <x-input
           label="Confirm password"
           name="password_confirmation"
           id="password_confirmation"

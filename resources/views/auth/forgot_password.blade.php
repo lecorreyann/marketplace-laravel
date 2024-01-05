@@ -1,9 +1,9 @@
-<x-layouts.auth-layout>
+<x-marketplace-layout>
     <div class="container mx-auto">
         <div>
             @if (session('success'))
                 <div>
-                    <x-alert type="success" :content="session('success')" />
+                    <x-alert alert-type="success" :content="session('success')" />
                 </div>
             @else
                 @if (session('error'))
@@ -21,4 +21,4 @@
             @endif
         </div>
     </div>
-</x-layouts.auth-layout>
+</x-marketplace-layout>

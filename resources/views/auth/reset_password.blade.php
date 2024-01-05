@@ -1,4 +1,4 @@
-<x-layouts.auth-layout>
+<x-marketplace-layout>
     <div class="container mx-auto">
         <div>
             @if (session('success'))
@@ -29,4 +29,4 @@
             <a href="{{ route('auth.sign_in.index') }}">Sign In</a>
         </div>
     </div>
-</x-layouts.auth-layout>
+  </x-marketplace-layout>

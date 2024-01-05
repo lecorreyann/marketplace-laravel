@@ -15,9 +15,10 @@
       <x-alert
         alert-type="danger"
         title="{{ session()->has('error.title') ? session('error.title') : null }}"
-        message="{{ session()->has('error.message') ? session('error.message') : session('error') }}"
         class="mt-2"
-      />
+      >
+        {{ session()->has('error.message') ? session('error.message') : session('error') }}
+      </x-alert>
     @endif
   </div>
 
@@ -27,7 +28,7 @@
         @method('PATCH')
 
         {{-- user.password --}}
-        <x-forms.fields.input
+        <x-input
           label="Password"
           name="password"
           id="password"
@@ -36,7 +37,7 @@
         />
 
         {{-- user.password_confirmation --}}
-        <x-forms.fields.input
+        <x-input
           label="Confirm password"
           name="password_confirmation"
           id="password_confirmation"

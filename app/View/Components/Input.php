@@ -6,14 +6,19 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class Alert extends Component
+class Input extends Component
 {
   /**
    * Create a new component instance.
    */
   public function __construct(
-    public string $alertType = 'primary',
-    public string|null $title = null,
+    public string $label,
+    public string $id,
+    public string $type,
+    public string $name,
+    public string $placeholder = '',
+    public string|null $autocomplete = null,
+    public string|null $description = null,
   ) {
     //
   }
@@ -23,6 +28,6 @@ class Alert extends Component
    */
   public function render(): View|Closure|string
   {
-    return view('components.alert');
+    return view('components.forms.fields.input');
   }
 }

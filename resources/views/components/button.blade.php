@@ -8,6 +8,7 @@
     "px-3 py-2 text-sm" => $attributes->get('size') === 'lg',
     "px-3.5 py-2.5 text-sm" => $attributes->get('size') === 'xl',
     $attributes->get('class') ??  null => $attributes->get('class'),
+    "inline-flex items-center gap-x-1.5" => $attributes->get('with-icon') === true,
   ])
 >
   {{ $slot }}
