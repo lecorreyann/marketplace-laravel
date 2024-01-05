@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Namespace for the authentication related Livewire components.
+ * Namespace for the company related Livewire components
  */
 
 namespace App\Livewire\Companies;
@@ -14,7 +14,7 @@ use Livewire\Component;
 
 /**
  * CreateCompany component class.
- * This class is responsible for handling user sign in.
+ * This class is responsible for handling the create company.
  */
 class CreateCompany extends Component
 {

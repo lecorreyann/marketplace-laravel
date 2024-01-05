@@ -13,7 +13,7 @@
 
     @click.outside="closeListbox()"
     @keydown.escape="closeListbox()"
-    class="relative"
+    class="relative mt-2 rounded-md shadow-sm"
   >
     <button
       x-ref="button"

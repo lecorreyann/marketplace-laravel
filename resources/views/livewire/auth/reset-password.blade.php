@@ -24,7 +24,7 @@
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-      <form class="space-y-6" wire:submit="update">
+      <form class="space-y-6" wire:submit="resetPassword">
         @method('PATCH')
 
         {{-- user.password --}}

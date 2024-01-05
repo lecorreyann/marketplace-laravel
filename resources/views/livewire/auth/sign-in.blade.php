@@ -24,7 +24,7 @@
 
   <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
     <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-      <form class="space-y-6" wire:submit="store">
+      <form class="space-y-6" wire:submit="signIn">
 
 
         {{-- user.email --}}
@@ -48,7 +48,7 @@
 
         <div class="flex items-center justify-between">
           <div class="flex items-center">
-            <input wire:model="remember" id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+            <input wire:model="form.remember" id="remember-me" name="remember-me" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
             <label for="remember-me" class="ml-3 block text-sm leading-6 text-gray-900">Remember me</label>
           </div>
 

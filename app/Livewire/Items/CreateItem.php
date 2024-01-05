@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Namespace for the authentication related Livewire components.
+ * Namespace for the item related Livewire components.
  */
 
 namespace App\Livewire\Items;
@@ -14,7 +14,7 @@ use Livewire\Component;
 
 /**
  * CreateItem component class.
- * This class is responsible for handling user sign in.
+ * This class is responsible for handling the create item.
  */
 class CreateItem extends Component
 {
