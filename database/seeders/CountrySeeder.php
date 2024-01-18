@@ -167,7 +167,6 @@ class CountrySeeder extends Seeder
       array('iso_3166-1_alpha-2' => 'NR', 'name' => 'Nauru'),
       array('iso_3166-1_alpha-2' => 'NP', 'name' => 'Nepal'),
       array('iso_3166-1_alpha-2' => 'NL', 'name' => 'Netherlands'),
-      array('iso_3166-1_alpha-2' => 'AN', 'name' => 'Netherlands Antilles'),
       array('iso_3166-1_alpha-2' => 'NC', 'name' => 'New Caledonia'),
       array('iso_3166-1_alpha-2' => 'NZ', 'name' => 'New Zealand'),
       array('iso_3166-1_alpha-2' => 'NI', 'name' => 'Nicaragua'),
@@ -253,10 +252,8 @@ class CountrySeeder extends Seeder
       array('iso_3166-1_alpha-2' => 'WF', 'name' => 'Wallis and Futuna Islands'),
       array('iso_3166-1_alpha-2' => 'EH', 'name' => 'Western Sahara'),
       array('iso_3166-1_alpha-2' => 'YE', 'name' => 'Yemen'),
-      array('iso_3166-1_alpha-2' => 'YU', 'name' => 'Yugoslavia'),
-      array('iso_3166-1_alpha-2' => 'ZR', 'name' => 'Zaire'),
       array('iso_3166-1_alpha-2' => 'ZM', 'name' => 'Zambia'),
-      array('iso_3166-1_alpha-2' => 'ZW', 'name' => 'Zimbabwe'),
+      array('iso_3166-1_alpha-2' => 'ZW', 'name' => 'Zimbabwe')
     );
 
     foreach ($countries as $country) {

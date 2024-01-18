@@ -38,7 +38,11 @@
                     @mouseover="setFocusedOption({{ $index }})" key="{{ $option->id }}">
 
                     <div class="flex items-center">
-                        <x-flag country-code="fr" class="h-5 w-5 flex-shrink-0 rounded-full" />
+                        {{-- Country flags --}}
+                        @if ($type === \App\Enums\SelectType::country)
+                            <x-flag country-code="{{ Str::lower($option['iso_3166-1_alpha-2']) }}"
+                                class="h-5 w-5 flex-shrink-0 rounded-full" />
+                        @endif
                         <!-- Selected: "font-semibold", Not Selected: "font-normal" -->
                         <span class="ml-3 block truncate"
                             :class="selected === {{ $option[$optionValue] }} ? 'font-semibold' : 'font-normal'">{{ $option[$optionText] }}</span>
