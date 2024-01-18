@@ -26,7 +26,7 @@
       <form class="space-y-6">
 
           {{-- company.country --}}
-          <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country" model="country" option-text="name" option-value="id" />
+          <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country" model="country" option-text="name" option-value="id" :type="\App\Enums\SelectType::country" />
 
         <div>
           <x-button type="submit" class="flex w-full leading-6 justify-center">Register</x-button>
