@@ -1,11 +1,11 @@
-<div x-data="select({ open: false, selected: null, focused: null, options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })">
+<div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })" x-init="init()">
     <label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
-    <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()"
-        @keydown.arrow-down.prevent="focusNextOption()" @keydown.arrow-up.prevent="focusPreviousOption()">
+    <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()">
         <button type="button" @click="toggleListOptions()"
             class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6"
             aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
-            @keydown.enter.stop.prevent="handleKeydownEnter()">
+            @keydown.enter.stop.prevent="handleKeydownEnter()" @keydown.arrow-down.prevent="focusNextOption()"
+            @keydown.arrow-up.prevent="focusPreviousOption()" @keydown="handleKeyPress($event)">
             <span class="flex items-center" x-show="selected===null">
                 <span class="block truncate text-gray-500" x-show="selected===null">
                     {{ $placeholder }}
@@ -70,6 +70,7 @@
             return {
                 selected: config.selected,
                 focused: config.focused,
+                search: '',
                 options: config.options,
                 open: config.open,
                 optionText: config.optionText,
@@ -92,9 +93,11 @@
 
                     this.$nextTick(() => {
                         const focusedElement = this.$refs.listbox.children[this.focused]
-                        focusedElement.scrollIntoView({
-                            block: 'nearest'
-                        })
+                        if (focusedElement) {
+                            focusedElement.scrollIntoView({
+                                block: 'nearest'
+                            })
+                        }
                     })
 
                 },
@@ -117,9 +120,11 @@
                     // scroll to focused option
                     this.$nextTick(() => {
                         const focusedElement = this.$refs.listbox.children[this.focused]
-                        focusedElement.scrollIntoView({
-                            block: 'nearest'
-                        })
+                        if (focusedElement) {
+                            focusedElement.scrollIntoView({
+                                block: 'nearest'
+                            })
+                        }
                     })
                 },
 
@@ -157,7 +162,61 @@
                     if (this.focused !== null) {
                         this.selected = this.options[this.focused][this.optionValue]
                     }
-                }
+                },
+
+                handleKeyPress(event) {
+                    // if key is a letter
+                    if (event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode === 8 || event.keyCode === 32) {
+                        const key = event.key.toLowerCase();
+                        if (!this.open && event.keyCode !== 8 || event.keyCode !== 32) this.open = true;
+
+                        if (event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode === 32)
+                            this.search += key;
+
+                        const matchOptionIndex = this.options.findIndex((option) => {
+                            return option[this.optionText].toLowerCase().startsWith(this.search);
+                        });
+
+
+                        if (Number.isInteger(matchOptionIndex)) {
+                            this.focused = matchOptionIndex;
+
+                            // scroll to focused option
+                            this.$nextTick(() => {
+                                const focusedElement = this.$refs.listbox.children[this.focused]
+                                if (focusedElement) {
+                                    focusedElement.scrollIntoView({
+                                        block: 'nearest'
+                                    })
+                                }
+                            })
+                        }
+
+
+
+                    } else {
+                        return null;
+                    }
+                },
+
+                // watch this.search for changes
+                init() {
+
+                    this.$watch('search', ((newValue, oldValue) => {
+
+                        // Clear the previous timeout if it exists
+                        if (this.resetTimeout) {
+                            clearTimeout(this.resetTimeout);
+                        }
+
+                        // Set a timeout to reset search after 500ms if it does not change
+                        this.resetTimeout = setTimeout(() => {
+                            if (this.search === newValue) {
+                                this.search = '';
+                            }
+                        }, 500);
+                    }))
+                },
 
             }
         }
