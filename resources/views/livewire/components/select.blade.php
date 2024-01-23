@@ -1,4 +1,5 @@
 <div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })" x-init="init()">
+    <img src="{{ asset('img/loading.gif') }}" class="hidden" id="loading" alt="loading" />
     <label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
     <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()">
         <button type="button" @click="toggleListOptions()"
@@ -6,17 +7,22 @@
             aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
             @keydown.enter.stop.prevent="handleKeydownEnter()" @keydown.arrow-down.prevent="focusNextOption()"
             @keydown.arrow-up.prevent="focusPreviousOption()" @keydown="handleKeyPress($event)">
-            <span class="flex items-center" x-show="selected===null">
+            <span class="flex items-center" x-if="selected===null">
                 <span class="block truncate text-gray-500" x-show="selected===null">
                     {{ $placeholder }}
                 </span>
             </span>
-            <span class="flex items-center" x-show="selected!=null">
-                <x-flag country-code="fr" class="h-5 w-5 flex-shrink-0 rounded-full" />
-                <span class="ml-3 block truncate"
-                    x-text="selected ? Object.values(options).find(item => item[optionValue] === selected)[optionText] : 'No option selected'">
+            <template x-if="selected!=null">
+                <span class="flex items-center">
+                    {{-- Country flags --}}
+                    @if ($type === \App\Enums\SelectType::country)
+                        <img :src="getFlag()" alt="flag" class="h-5 w-5 rounded-full">
+                    @endif
+                    <span class="ml-3 block truncate"
+                        x-text="selected ? Object.values(options).find(item => item[optionValue] === selected)[optionText] : 'No option selected'">
+                    </span>
                 </span>
-            </span>
+            </template>
             <span class="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                 <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                     <path fill-rule="evenodd"
@@ -35,13 +41,23 @@
                 <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
                     :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''" id="listbox-option-0"
                     role="option" @click="setSelectedOption({{ $option->id }})"
-                    @mouseover="setFocusedOption({{ $index }})" key="{{ $option->id }}">
+                    @mouseover="setFocusedOption({{ $index }})" :key="{{ $option->id }}">
 
                     <div class="flex items-center">
                         {{-- Country flags --}}
                         @if ($type === \App\Enums\SelectType::country)
-                            <x-flag country-code="{{ Str::lower($option['iso_3166-1_alpha-2']) }}"
-                                class="h-5 w-5 flex-shrink-0 rounded-full" />
+                            @php
+                                $countryCode = Str::lower($option['iso_3166-1_alpha-2']);
+                                if ($countryCode === 'ty') {
+                                    $countryCode = 'fr';
+                                } elseif ($countryCode === 'fx') {
+                                    $countryCode = 'fr';
+                                } elseif ($countryCode === 'tp') {
+                                    $countryCode = 'tl';
+                                }
+                            @endphp
+                            <img src="{{ Vite::asset('resources/img/flags/' . $countryCode . '.svg') }}" alt="flag"
+                                class="h-5 w-5 rounded-full">
                         @endif
                         <!-- Selected: "font-semibold", Not Selected: "font-normal" -->
                         <span class="ml-3 block truncate"
@@ -155,9 +171,9 @@
                 },
 
                 setSelectedOption(id) {
-                    console.log(id)
                     this.selected = id
                     this.closeListOptions()
+                    //this.getFlag()
                 },
 
 
@@ -203,6 +219,23 @@
                     }
                 },
 
+                getFlag() {
+                    if (this.selected === null) return null;
+                    const selectedOption = Object.values(this.options).find(item => item[this.optionValue] === this
+                        .selected);
+                    let countryCode = selectedOption['iso_3166-1_alpha-2'].toLowerCase();
+                    if (countryCode === 'ty') {
+                        countryCode = 'fr';
+                    } else if (countryCode === 'fx') {
+                        countryCode = 'fr';
+                    } else if (countryCode === 'tp') {
+                        countryCode = 'tl';
+                    }
+
+                    return `{{ Vite::asset('resources/img/flags/') }}${countryCode}.svg`;
+                },
+
+
                 // watch this.search for changes
                 init() {
 
@@ -224,5 +257,7 @@
 
             }
         }
+
+        // return flag component at span id="flag"
     </script>
 </div>
