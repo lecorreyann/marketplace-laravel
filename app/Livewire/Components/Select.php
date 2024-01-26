@@ -20,8 +20,9 @@ class Select extends Component
   public string $optionValue; // the field to use for the option value
   public Collection $options;
   public SelectType|null $type;
+  public bool $disabled;
 
-  public function mount($id, $label, $optionText, $optionValue, $placeholder, $name = null, $class = null, $value = null, $type = null)
+  public function mount($id, $label, $optionText, $optionValue, $placeholder, $name = null, $class = null, $value = null, $type = null, $disabled = false)
   {
     $this->id = $id;
     $this->name = $name;
@@ -34,6 +35,7 @@ class Select extends Component
     $this->value = $value;
     $this->placeholder = $placeholder;
     $this->type = $type;
+    $this->disabled = $disabled;
   }
 
 

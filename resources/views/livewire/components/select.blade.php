@@ -1,12 +1,19 @@
 <div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })" x-init="init()">
-    <img src="{{ asset('img/loading.gif') }}" class="hidden" id="loading" alt="loading" />
+    {{-- <img src="{{ asset('img/loading.gif') }}" class="hidden" id="loading" alt="loading" /> --}}
+
     <label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
     <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()">
-        <button type="button" @click="toggleListOptions()"
-            class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6"
-            aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
-            @keydown.enter.stop.prevent="handleKeydownEnter()" @keydown.arrow-down.prevent="focusNextOption()"
-            @keydown.arrow-up.prevent="focusPreviousOption()" @keydown="handleKeyPress($event)">
+        <button type="button" @click="@if (!$disabled) toggleListOptions() @endif"
+            @class([
+                "relative
+                                    w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1
+                                    ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm
+                                    sm:leading-6",
+                'cursor-not-allowed bg-gray-50 text-gray-500 ring-gray-200' => $disabled,
+            ]) aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
+            @keydown.enter.stop.prevent="@if (!$disabled) handleKeydownEnter() @endif"
+            @keydown.arrow-down.prevent="focusNextOption()" @keydown.arrow-up.prevent="focusPreviousOption()"
+            @keydown="handleKeyPress($event)">
             <span class="flex items-center" x-if="selected===null">
                 <span class="block truncate text-gray-500" x-show="selected===null">
                     {{ $placeholder }}
@@ -38,9 +45,13 @@
             x-show="open" x-ref="listbox">
 
             @foreach ($options as $index => $option)
-                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
+                <li @class([
+                    'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900',
+                    'opacity-50' => $option->activated == 0,
+                ])
                     :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''" id="listbox-option-0"
-                    role="option" @click="setSelectedOption({{ $option->id }})"
+                    role="option"
+                    @click="@if ($option->activated != 0) setSelectedOption({{ $option->id }}) @endif"
                     @mouseover="setFocusedOption({{ $index }})" :key="{{ $option->id }}">
 
                     <div class="flex items-center">
@@ -60,7 +71,8 @@
                                 class="h-5 w-5 rounded-full">
                         @endif
                         <!-- Selected: "font-semibold", Not Selected: "font-normal" -->
-                        <span class="ml-3 block truncate"
+
+                        <span class='ml-3 block truncate'
                             :class="selected === {{ $option[$optionValue] }} ? 'font-semibold' : 'font-normal'">{{ $option[$optionText] }}</span>
                     </div>
 
@@ -178,9 +190,10 @@
 
 
                 handleKeydownEnter() {
-                    this.toggleListOptions()
-                    if (this.focused !== null) {
+                    if (!this.open) this.open = true
+                    if (this.focused !== null && this.options[this.focused].activated !== 0) {
                         this.selected = this.options[this.focused][this.optionValue]
+                        this.toggleListOptions()
                     }
                 },
 
