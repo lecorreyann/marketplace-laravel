@@ -4,6 +4,7 @@ namespace App\Livewire\Companies;
 
 use Livewire\Component;
 use App\Livewire\Forms\CreateCompanyForm;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * CreateCompany component class.
@@ -12,4 +13,11 @@ use App\Livewire\Forms\CreateCompanyForm;
 class CreateCompany extends Component
 {
   public CreateCompanyForm $form;
+
+  public Collection $countries;
+
+  public function mount()
+  {
+    $this->countries = \App\Models\Country::all();
+  }
 }

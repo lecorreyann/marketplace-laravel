@@ -13,7 +13,6 @@ class Select extends Component
   public string|null $name;
   public string|null $class;
   public string $label;
-  public string $model;
   public string|null $value;
   public string $placeholder;
   public string $optionText; // the field to use for the option text
@@ -21,21 +20,22 @@ class Select extends Component
   public Collection $options;
   public SelectType|null $type;
   public bool $disabled;
+  public mixed $disabledOptions = [];
 
-  public function mount($id, $label, $optionText, $optionValue, $placeholder, $name = null, $class = null, $value = null, $type = null, $disabled = false)
+  public function mount($id, $label, $options,  $optionText, $optionValue, $placeholder, $disabled = false, $name = null, $class = null, $value = null, $type = null, $disabledOptions = [])
   {
     $this->id = $id;
     $this->name = $name;
     $this->class = $class;
     $this->label = $label;
-    $this->model = 'App\Models\\' . $this->model;
     $this->optionText = $optionText;
     $this->optionValue = $optionValue;
-    $this->options = $this->model::all();
+    $this->options = $options;
     $this->value = $value;
     $this->placeholder = $placeholder;
     $this->type = $type;
     $this->disabled = $disabled;
+    $this->disabledOptions = $disabledOptions;
   }
 
 

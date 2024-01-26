@@ -1,5 +1,6 @@
 <div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 
+
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
 
         @if (session()->has('success') || session()->has('success.title') || session()->has('success.message'))
@@ -20,10 +21,12 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[720px]">
         <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form class="space-y-6">
+                {{-- {{ dd($countries->where('activated', true)->pluck('id')) }} --}}
 
                 {{-- company.country --}}
                 <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country"
-                    model="country" option-text="name" option-value="id" :type="\App\Enums\SelectType::country" :disabled="true" />
+                    :options="$countries" option-text="name" option-value="id" :type="\App\Enums\SelectType::country" :disabled="false"
+                    :disabledOptions="$countries->where('activated', false)->pluck('id')" />
 
                 <div>
                     <x-button type="submit" class="flex w-full justify-center leading-6">Register</x-button>

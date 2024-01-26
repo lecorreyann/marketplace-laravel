@@ -6,9 +6,9 @@
         <button type="button" @click="@if (!$disabled) toggleListOptions() @endif"
             @class([
                 "relative
-                                    w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1
-                                    ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm
-                                    sm:leading-6",
+                                                                                                                                                                                                                                                                                                                                                                                    w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1
+                                                                                                                                                                                                                                                                                                                                                                                    ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm
+                                                                                                                                                                                                                                                                                                                                                                                    sm:leading-6",
                 'cursor-not-allowed bg-gray-50 text-gray-500 ring-gray-200' => $disabled,
             ]) aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
             @keydown.enter.stop.prevent="@if (!$disabled) handleKeydownEnter() @endif"
@@ -47,11 +47,11 @@
             @foreach ($options as $index => $option)
                 <li @class([
                     'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900',
-                    'opacity-50' => $option->activated == 0,
+                    'opacity-50' => $disabledOptions->contains($option->id),
                 ])
                     :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''" id="listbox-option-0"
                     role="option"
-                    @click="@if ($option->activated != 0) setSelectedOption({{ $option->id }}) @endif"
+                    @click="@if (!$disabledOptions->contains($option->id)) setSelectedOption({{ $option->id }}) @endif"
                     @mouseover="setFocusedOption({{ $index }})" :key="{{ $option->id }}">
 
                     <div class="flex items-center">
