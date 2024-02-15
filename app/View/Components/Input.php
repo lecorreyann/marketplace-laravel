@@ -17,6 +17,7 @@ class Input extends Component
     public string $type,
     public string $name,
     public string $placeholder = '',
+    public int|null $debounce = null,
     public string|null $autocomplete = null,
     public string|null $description = null,
   ) {

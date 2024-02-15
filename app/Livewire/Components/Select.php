@@ -22,7 +22,7 @@ class Select extends Component
   public bool $disabled;
   public mixed $disabledOptions = [];
 
-  public function mount($id, $label, $options,  $optionText, $optionValue, $placeholder, $disabled = false, $name = null, $class = null, $value = null, $type = null, $disabledOptions = [])
+  public function mount($id, $label, $options,  $optionText, $optionValue, $placeholder, $disabled = false, $disabledOptions = [], $name = null, $class = null, $value = null, $type = null)
   {
     $this->id = $id;
     $this->name = $name;
@@ -37,7 +37,6 @@ class Select extends Component
     $this->disabled = $disabled;
     $this->disabledOptions = $disabledOptions;
   }
-
 
 
   public function render()

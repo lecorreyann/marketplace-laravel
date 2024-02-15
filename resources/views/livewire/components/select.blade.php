@@ -1,24 +1,23 @@
 <div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })" x-init="init()">
-    {{-- <img src="{{ asset('img/loading.gif') }}" class="hidden" id="loading" alt="loading" /> --}}
 
-    <label id="listbox-label" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
+    <label id="{{ $id }}" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
     <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()">
         <button type="button" @click="@if (!$disabled) toggleListOptions() @endif"
             @class([
-                "relative
-                                                                                                                                                                                                                                                                                                                                                                                    w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1
-                                                                                                                                                                                                                                                                                                                                                                                    ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm
-                                                                                                                                                                                                                                                                                                                                                                                    sm:leading-6",
+                'relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6',
                 'cursor-not-allowed bg-gray-50 text-gray-500 ring-gray-200' => $disabled,
-            ]) aria-haspopup="listbox" :aria-expanded="open" aria-labelledby="listbox-label"
+            ]) aria-haspopup="listbox" :aria-expanded="open"
+            aria-labelledby="{{ $id }}"
             @keydown.enter.stop.prevent="@if (!$disabled) handleKeydownEnter() @endif"
             @keydown.arrow-down.prevent="focusNextOption()" @keydown.arrow-up.prevent="focusPreviousOption()"
             @keydown="handleKeyPress($event)">
-            <span class="flex items-center" x-if="selected===null">
-                <span class="block truncate text-gray-500" x-show="selected===null">
-                    {{ $placeholder }}
+            <template x-if="selected===null">
+                <span class="flex items-center">
+                    <span class="block truncate text-gray-500">
+                        {{ $placeholder }}
+                    </span>
                 </span>
-            </span>
+            </template>
             <template x-if="selected!=null">
                 <span class="flex items-center">
                     {{-- Country flags --}}
@@ -39,66 +38,71 @@
             </span>
         </button>
 
+        <template x-if="open">
+            <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                tabindex="-1" role="listbox" aria-labelledby="{{ $id }}"
+                :aria-activedescendant="'listbox-option-' + focused" x-ref="listbox">
 
-        <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            tabindex="-1" role="listbox" aria-labelledby="listbox-label" aria-activedescendant="listbox-option-3"
-            x-show="open" x-ref="listbox">
+                @foreach ($options as $index => $option)
+                    <li @class([
+                        'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900',
+                        'opacity-50' => $disabledOptions->contains($option->id),
+                    ])
+                        :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''"
+                        id="listbox-option-{{ $index }}" role="option"
+                        @click="@if (!$disabledOptions->contains($option->id)) setSelectedOption({{ $option->id }}) @endif"
+                        @mouseover="setFocusedOption({{ $index }})" :key="{{ $option->id }}">
 
-            @foreach ($options as $index => $option)
-                <li @class([
-                    'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900',
-                    'opacity-50' => $disabledOptions->contains($option->id),
-                ])
-                    :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''" id="listbox-option-0"
-                    role="option"
-                    @click="@if (!$disabledOptions->contains($option->id)) setSelectedOption({{ $option->id }}) @endif"
-                    @mouseover="setFocusedOption({{ $index }})" :key="{{ $option->id }}">
+                        <div class="flex items-center">
+                            {{-- Country flags --}}
+                            @if ($type === \App\Enums\SelectType::country)
+                                @php
+                                    $countryCode = Str::lower($option['iso_3166-1_alpha-2']);
+                                    if ($countryCode === 'ty') {
+                                        $countryCode = 'fr';
+                                    } elseif ($countryCode === 'fx') {
+                                        $countryCode = 'fr';
+                                    } elseif ($countryCode === 'tp') {
+                                        $countryCode = 'tl';
+                                    }
+                                @endphp
+                                <img src="{{ Vite::asset('resources/img/flags/' . $countryCode . '.svg') }}"
+                                    alt="flag" class="h-5 w-5 rounded-full">
+                            @endif
+                            <!-- Selected: "font-semibold", Not Selected: "font-normal" -->
 
-                    <div class="flex items-center">
-                        {{-- Country flags --}}
-                        @if ($type === \App\Enums\SelectType::country)
-                            @php
-                                $countryCode = Str::lower($option['iso_3166-1_alpha-2']);
-                                if ($countryCode === 'ty') {
-                                    $countryCode = 'fr';
-                                } elseif ($countryCode === 'fx') {
-                                    $countryCode = 'fr';
-                                } elseif ($countryCode === 'tp') {
-                                    $countryCode = 'tl';
-                                }
-                            @endphp
-                            <img src="{{ Vite::asset('resources/img/flags/' . $countryCode . '.svg') }}" alt="flag"
-                                class="h-5 w-5 rounded-full">
-                        @endif
-                        <!-- Selected: "font-semibold", Not Selected: "font-normal" -->
-
-                        <span class='ml-3 block truncate'
-                            :class="selected === {{ $option[$optionValue] }} ? 'font-semibold' : 'font-normal'">{{ $option[$optionText] }}</span>
-                    </div>
-
-
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4"
-                        x-show="selected == {{ $option->id }}"
-                        :class="focused === {{ $index }} ? 'text-white' : 'text-indigo-600'"
-                        id="listbox-option-0">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
-                            <path fill-rule="evenodd"
-                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                </li>
-            @endforeach
+                            <span class='ml-3 block truncate'
+                                :class="selected === {{ $option[$optionValue] }} ? 'font-semibold' : 'font-normal'">{{ $option[$optionText] }}</span>
+                        </div>
 
 
-        </ul>
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4"
+                            x-show="selected == {{ $option->id }}"
+                            :class="focused === {{ $index }} ? 'text-white' : 'text-indigo-600'"
+                            id="listbox-option-0">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
+                                <path fill-rule="evenodd"
+                                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </li>
+                @endforeach
 
-        {{-- value --}}
-        <input type="hidden" name="value" x-bind:value="selected">
+
+            </ul>
+        </template>
+
+
     </div>
 
+
+
+</div>
+
+@script
     <script>
-        function select(config) {
+        Alpine.data('select', (config) => {
             return {
                 selected: config.selected,
                 focused: config.focused,
@@ -176,8 +180,6 @@
                     }
                 },
 
-
-
                 setFocusedOption(index) {
                     this.focused = index
                 },
@@ -185,15 +187,20 @@
                 setSelectedOption(id) {
                     this.selected = id
                     this.closeListOptions()
+                    $wire.dispatch('updated-value', {
+                        value: this.selected
+                    });
                     //this.getFlag()
                 },
-
 
                 handleKeydownEnter() {
                     if (!this.open) this.open = true
                     if (this.focused !== null && this.options[this.focused].activated !== 0) {
                         this.selected = this.options[this.focused][this.optionValue]
                         this.toggleListOptions()
+                        $wire.dispatch('updated-value', {
+                            value: this.selected
+                        })
                     }
                 },
 
@@ -269,8 +276,6 @@
                 },
 
             }
-        }
-
-        // return flag component at span id="flag"
+        })
     </script>
-</div>
+@endscript

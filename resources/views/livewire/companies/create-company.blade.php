@@ -21,12 +21,31 @@
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[720px]">
         <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form class="space-y-6">
-                {{-- {{ dd($countries->where('activated', true)->pluck('id')) }} --}}
 
                 {{-- company.country --}}
                 <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country"
-                    :options="$countries" option-text="name" option-value="id" :type="\App\Enums\SelectType::country" :disabled="false"
-                    :disabledOptions="$countries->where('activated', false)->pluck('id')" />
+                    :options="$countries" option-text="name" option-value="id" :type="App\Enums\SelectType::country" :disabled="false"
+                    :disabledOptions="$countries->where('activated', false)->pluck('id')" @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
+
+                {{-- display country --}}
+
+                @isset($form->country)
+                    @switch(App\Models\Country::find($form->country)->name)
+                        @case('France')
+                            <livewire:components.search-company label="Company"
+                                placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
+                                country="France" />
+                        @break
+
+                        @default
+                        @break
+                    @endswitch
+                @endisset
+
+
+
+
+                {{-- company.email --}}
 
                 <div>
                     <x-button type="submit" class="flex w-full justify-center leading-6">Register</x-button>
