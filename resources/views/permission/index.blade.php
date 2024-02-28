@@ -1,4 +1,4 @@
-<x-layout>
+<x-admin-layout>
     <div>
         @if (session('success'))
             <div class="alert alert-success">
@@ -42,4 +42,4 @@
         {{-- create --}}
         <a href="{{ route('admin.permission.create') }}">Create</a>
     </div>
-</x-layout>
+</x-admin-layout>

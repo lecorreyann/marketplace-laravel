@@ -2,10 +2,13 @@
 
 namespace App\Livewire\Companies;
 
+use App\Enums\CompanyIdentifierType;
 use Livewire\Component;
 use App\Livewire\Forms\CreateCompanyForm;
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\On;
+use App\Models\Country;
 
 /**
  * CreateCompany component class.
@@ -20,7 +23,8 @@ class CreateCompany extends Component
 
   public function mount()
   {
-    $this->countries = \App\Models\Country::all();
+    $this->countries = Country::all();
+    $this->form->setCompanyName('');
   }
 
 
@@ -31,9 +35,14 @@ class CreateCompany extends Component
     $this->form->country = $value;
   }
 
-  #[On('updated-search-company')]
-  public function updatedSearchCompany()
+  #[On('updated-company')]
+  public function updatedCompany($value)
   {
-    dd('updated');
+    $country = Country::find($this->form->country);
+    if ($country['iso_3166-1_alpha-2'] === 'FX') {
+      $this->form->companyName = $value['nom_complet'];
+      $this->form->companyIdentifier = $value['siren'];
+      $this->form->companyIdentifierType = CompanyIdentifierType::siren;
+    }
   }
 }

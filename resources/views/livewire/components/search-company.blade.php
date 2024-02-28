@@ -3,25 +3,27 @@
     selected: null,
     focused: null,
     search: '',
-    options: {{ $options->toJSON() }},
+    options: @entangle('options'),
     optionTextTopLeft: '{{ $optionTextTopLeft }}',
     optionTextTopRight: '{{ $optionTextTopRight }}',
     optionTextBottomLeft: '{{ $optionTextBottomLeft }}',
     optionTextBottomRight: '{{ $optionTextBottomRight }}',
-    optionValue: '{{ $optionValue }}'
-})" x-init="init()">
+    optionValue: '{{ $optionValue }}',
+    listboxId: '{{ 'listbox-' . $id }}'
+})">
 
     <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()"
         @keydown.arrow-down.prevent="focusNextOption()" @keydown.arrow-up.prevent="focusPreviousOption()">
+
 
 
         {{-- SEARCH FIELD --}}
         <div class="flex items-stretch">
             <div class="w-full">
                 <x-input label="Company" name="search-value" id="search-value" type="text" :placeholder="$placeholder"
-                    wire:model.live.debounce.150ms='form.searchValue' autocomplete="disabled" @focus="openListOptions()"
-                    @click="openListOptions()" @keydown.enter.stop.prevent="openListOptions()"
-                    @keydown="handleKeyPress($event)" />
+                    wire:model.live.debounce.500ms='form.searchValue' autocomplete="off"
+                    @click="if(options.length > 0){ openListOptions() }" @keydown="handleKeyPress($event)"
+                    data-form-type="other" />
             </div>
             <div wire:loading.flex class="absolute bottom-[8px] right-0 flex self-end pr-4">
                 <svg class="h-5 w-5 animate-spin text-current" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -36,76 +38,75 @@
         </div>
 
 
-
         {{-- OPTIONS --}}
-        <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-            tabindex="-1" role="listbox" aria-labelledby="{{ $id }}"
-            :aria-activedescendant="'listbox-option-' + focused" x-ref="listbox"
-            x-show="open == true && options.length > 0">
 
 
-            @foreach ($options as $index => $option)
-                <li @class([
-                    'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 flex justify-between gap-x-6 py-5',
-                    'opacity-50' => $disabledOptions->contains($option[$optionValue]),
-                ])
-                    :class="focused === {{ $index }} ? 'bg-indigo-600 text-white' : ''"
-                    id="listbox-option-{{ $index }}" role="option"
-                    @click="@if (!$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
-                    @mouseover="setFocusedOption({{ $index }})" :key="{{ $option[$optionValue] }}">
+        <template x-if="open && options.length > 0">
+            <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+                tabindex="1" role="listbox" aria-labelledby="{{ $id }}" id="{{ 'listbox-' . $id }}"
+                :aria-activedescendant="'listbox-option-' + focused" x-show="open" wire:loading.remove>
 
-                    <div class="flex min-w-0 gap-x-4 pl-3">
-                        <div class="min-w-0 flex-auto">
-                            {{-- Top Left Option Text --}}
-                            <p class="text-sm font-semibold leading-6"
-                                :class="focused === {{ $index }} ? 'text-white' : 'text-gray-900'">
-                                <span class="absolute inset-x-0 -top-px bottom-0"></span>
-                                {{ Arr::get($option, $optionTextTopLeft, '') }}
-                            </p>
-                            {{-- Bottom Left Option Text --}}
-                            <p class="mt-1 flex text-xs leading-5"
-                                :class="focused === {{ $index }} ? 'text-white' : 'text-gray-500'">
-                                {{ Arr::get($option, $optionTextBottomLeft, '') }}
-                            </p>
+                @foreach ($options as $index => $option)
+                    <li @class([
+                        'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 flex justify-between gap-x-6 py-5 focus:outline-none focus:bg-indigo-600 focus:text-white group',
+                        'opacity-50' => $disabledOptions->contains($option[$optionValue]),
+                    ]) id="listbox-option-{{ $index }}" role="option"
+                        @click="@if (!$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
+                        @keydown.enter.stop.prevent="@if (!$disabled && !$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
+                        @mouseover="setFocusedOption({{ $index }})" :key="{{ $option[$optionValue] }}"
+                        tabindex="1">
+
+                        <div class="flex min-w-0 gap-x-4 pl-3">
+                            <div class="min-w-0 flex-auto">
+                                {{-- Top Left Option Text --}}
+                                <p class="text-sm font-semibold leading-6">
+                                    <span class="absolute inset-x-0 -top-px bottom-0"></span>
+                                    {{ Arr::get($option, $optionTextTopLeft, '') }}
+                                </p>
+                                {{-- Bottom Left Option Text --}}
+                                <p class="mt-1 flex text-xs leading-5">
+                                    {{ Arr::get($option, $optionTextBottomLeft, '') }}
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex shrink-0 items-center gap-x-4">
-                        <div class="hidden sm:flex sm:flex-col sm:items-end">
-                            {{-- Top Right Option Text --}}
-                            <p class="text-sm leading-6"
-                                :class="focused === {{ $index }} ? 'text-white' : 'text-gray-900'">
-                                {{ Arr::get($option, $optionTextTopRight, '') }}
-                            </p>
-                            {{-- Bottom Right Option Text --}}
-                            <p class="mt-1 text-xs leading-5"
-                                :class="focused === {{ $index }} ? 'text-white' : 'text-gray-500'">
-                                {{ Arr::get($option, $optionTextBottomRight, '') }}
-                            </p>
+                        <div class="flex shrink-0 items-center gap-x-4">
+                            <div class="hidden sm:flex sm:flex-col sm:items-end">
+                                {{-- Top Right Option Text --}}
+                                <p class="text-sm leading-6">
+                                    {{ Arr::get($option, $optionTextTopRight, '') }}
+                                </p>
+                                {{-- Bottom Right Option Text --}}
+                                <p class="mt-1 text-xs leading-5">
+                                    {{ Arr::get($option, $optionTextBottomRight, '') }}
+                                </p>
+                            </div>
+
                         </div>
 
-                    </div>
+                        {{-- SVG SELECT INDICATOR --}}
+                        <span class="absolute inset-y-0 right-0 flex items-center pr-4"
+                            :class="{
+                                'text-indigo-600': selected == {{ $option[$optionValue] }} && focused !=
+                                    {{ $index }},
+                                'group-focus:text-white': selected == {{ $option[$optionValue] }}
+                            }"
+                            x-show="selected == {{ $option[$optionValue] }}" id="listbox-option-{{ $index }}">
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
+                                <path fill-rule="evenodd"
+                                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                    </li>
+                @endforeach
 
-                    {{-- SVG SELECT INDICATOR --}}
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-4"
-                        x-show="selected == {{ $option[$optionValue] }}"
-                        :class="focused === {{ $index }} ? 'text-white' : 'text-indigo-600'"
-                        id="listbox-option-0">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
-                            <path fill-rule="evenodd"
-                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </span>
-                </li>
-            @endforeach
+            </ul>
+        </template>
 
 
-        </ul>
+
 
     </div>
-
-
-
 
 
 
@@ -125,149 +126,168 @@
                 optionTextBottomLeft: config.optionTextBottomLeft,
                 optionTextBottomRight: config.optionTextBottomRight,
                 optionValue: config.optionValue,
+                listboxId: config.listboxId,
+                i: 0,
+                cleanup: null,
 
 
                 focusNextOption() {
 
-                    // open list options if not open
-                    if (!this.open) this.openListOptions()
 
-                    // handle focus
-                    if (this.focused === null) {
-                        this.focused = 0
-                    } else {
-                        if (this.focused === (this.options.length - 1)) {
-                            this.focused = 0
-                        } else {
-                            this.focused++
-                        }
-                    }
+                    // open list options if not open
+                    if (!this.open && this.options.length > 0) this.openListOptions()
+
 
                     this.$nextTick(() => {
-                        const focusedElement = this.$refs.listbox.children[this.focused]
-                        if (focusedElement) {
-                            focusedElement.scrollIntoView({
-                                block: 'nearest'
-                            })
+                        // handle focus
+                        if (this.focused === null) {
+                            this.focused = 0
+                        } else {
+                            if (this.focused === (this.options.length - 1)) {
+                                this.focused = 0
+                            } else {
+                                this.focused++
+                            }
                         }
+
+
+                        if (document.getElementById(this.listboxId)) {
+
+
+                            const focusedElement = document.getElementById(this.listboxId).children[this
+                                .focused]
+
+                            if (focusedElement) {
+                                focusedElement.focus()
+                                focusedElement.scrollIntoView({
+                                    block: 'nearest'
+                                })
+                            }
+                        }
+
                     })
+
+
 
                 },
 
                 focusPreviousOption() {
                     // open list options if not open
-                    if (!this.open) this.openListOptions()
+                    if (!this.open && this.options.length > 0) this.openListOptions()
 
-                    // handle focus
-                    if (this.focused === null) {
-                        this.focused = this.options.length - 1
-                    } else {
-                        if (this.focused === 0) {
-                            this.focused = this.options.length - 1
-                        } else {
-                            this.focused--
-                        }
-                    }
 
                     // scroll to focused option
                     this.$nextTick(() => {
-                        const focusedElement = this.$refs.listbox.children[this.focused]
-                        if (focusedElement) {
-                            focusedElement.scrollIntoView({
-                                block: 'nearest'
-                            })
+
+                        // handle focus
+                        if (this.focused === null) {
+                            this.focused = this.options.length - 1
+                        } else {
+                            if (this.focused === 0) {
+                                this.focused = this.options.length - 1
+                            } else {
+                                this.focused--
+                            }
                         }
+
+                        if (document.getElementById(this.listboxId)) {
+
+                            const focusedElement = document.getElementById(this.listboxId).children[this
+                                .focused]
+
+                            if (focusedElement) {
+
+                                focusedElement.focus()
+                                focusedElement.scrollIntoView({
+                                    block: 'nearest'
+                                })
+                            }
+                        }
+
                     })
                 },
 
                 openListOptions() {
                     this.open = true
+
                 },
 
                 closeListOptions() {
                     this.open = false
-                    console.log("ici")
-                },
-
-                toggleListOptions() {
-                    if (!this.open) {
-                        this.openListOptions()
-                    } else {
-                        this.closeListOptions()
-                    }
                 },
 
                 setFocusedOption(index) {
 
-
                     this.focused = index
+                    // change tabindex to focused option
+                    if (document.getElementById(this.listboxId) && document.getElementById(this.listboxId).children[
+                            index]) {
+                        document.getElementById(this.listboxId).children[index].focus()
+                    }
                 },
 
                 setSelectedOption(id) {
                     this.selected = id
                     this.closeListOptions()
                     $wire.dispatch('updated-value', {
-                        value: this.selected
+                        value: this.options[this.options.findIndex(option => option[this.optionValue] ==
+                            id)]
                     });
-                    //this.getFlag()
-                },
-
-                handleKeydownEnter() {
-                    if (!this.open) this.open = true
-                    if (this.focused !== null && this.options[this.focused].activated !== 0) {
-                        this.selected = this.options[this.focused][this.optionValue]
-                        this.toggleListOptions()
-                        $wire.dispatch('updated-value', {
-                            value: this.selected
-                        })
-                    }
                 },
 
                 handleKeyPress(event) {
 
-                    console.log(1)
                     // if key is a letter
                     if (event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode === 8 || event.keyCode === 32) {
 
-                        console.log(2)
-
                         const key = event.key.toLowerCase();
-                        console.log(3)
-                        if (!this.open && event.keyCode !== 8 || event.keyCode !== 32) this.open = true;
-                        console.log(4)
+
+
+                        // if (!this.open && event.keyCode !== 8 || event.keyCode !== 32) this.open = true;
+
 
                         if (event.keyCode >= 65 && event.keyCode <= 90 || event.keyCode === 32) this.search += key;
-                        console.log(5)
 
-                        const matchOptionIndex = this.options.findIndex((option) => {
+                        if (this.options.length) {
+                            const matchOptionIndex = this.options.findIndex((option) => {
+
+                                if (option[this.optionTextTopLeft])
+                                    return option[this.optionTextTopLeft].toLowerCase().startsWith(this
+                                        .search)
+                                else if (option[this.optionTextBottomLeft])
+                                    return option[
+                                        this.optionTextBottomLeft].toLowerCase().startsWith(this
+                                        .search)
+                                else if (option[this.optionTextTopRight])
+                                    return option[
+                                        this.optionTextTopRight].toLowerCase().startsWith(this
+                                        .search)
+                                else if (option[this.optionTextBottomRight])
+                                    return option[
+                                        this.optionTextBottomRight].toLowerCase().startsWith(this
+                                        .search);
+                            });
 
 
-                            return option[this.optionTextTopLeft].toLowerCase().startsWith(this
-                                    .search) ||
-                                option[
-                                    this.optionTextBottomLeft].toLowerCase().startsWith(this
-                                    .search) ||
-                                option[
-                                    this.optionTextTopRight].toLowerCase().startsWith(this
-                                    .search) ||
-                                option[
-                                    this.optionTextBottomRight].toLowerCase().startsWith(this
-                                    .search);
-                        });
+                            if (Number.isInteger(matchOptionIndex)) {
+                                this.focused = matchOptionIndex;
 
 
-                        if (Number.isInteger(matchOptionIndex)) {
-                            this.focused = matchOptionIndex;
+                                // scroll to focused option
+                                this.$nextTick(() => {
+                                    if (document.getElementById(this.listboxId)) {
 
-                            // scroll to focused option
-                            this.$nextTick(() => {
-                                const focusedElement = this.$refs.listbox.children[this.focused]
-                                if (focusedElement) {
-                                    focusedElement.scrollIntoView({
-                                        block: 'nearest'
-                                    })
-                                }
-                            })
+                                        const focusedElement = document.getElementById(this.listboxId)
+                                            .children[this
+                                                .focused]
+                                        if (focusedElement) {
+                                            focusedElement.scrollIntoView({
+                                                block: 'nearest'
+                                            })
+                                        }
+                                    }
+                                })
+                            }
                         }
 
 
@@ -277,30 +297,14 @@
                     }
                 },
 
-                getFlag() {
-                    if (this.selected === null) return null;
-                    const selectedOption = Object.values(this.options).find(item => item[this
-                            .optionValue] === this
-                        .selected);
-                    let countryCode = selectedOption['iso_3166-1_alpha-2'].toLowerCase();
-                    if (countryCode === 'ty') {
-                        countryCode = 'fr';
-                    } else if (countryCode === 'fx') {
-                        countryCode = 'fr';
-                    } else if (countryCode === 'tp') {
-                        countryCode = 'tl';
-                    }
-
-                    return `{{ Vite::asset('resources/img/flags/') }}${countryCode}.svg`;
-                },
-
-
                 // watch this.search for changes
                 init() {
 
 
 
                     this.$watch('search', ((newValue, oldValue) => {
+
+
 
                         // Clear the previous timeout if it exists
                         if (this.resetTimeout) {
@@ -316,14 +320,26 @@
                     }))
 
 
-                    $wire.on('updated-options', ({
+                    this.cleanup = Livewire.on('updated-options', ({
                         options
                     }) => {
-                        this.options = options
+
+                        this.open = false
+                        // this.focused = -1;
+                        this.options = options;
                         // this.options = options;
                         if (this.options.length > 0) this.open = true;
+
                     });
+
+
+
                 },
+
+                // destroy wire.on
+                destroy() {
+                    this.cleanup();
+                }
 
             }
         })

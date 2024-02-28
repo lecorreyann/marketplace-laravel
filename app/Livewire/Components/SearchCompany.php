@@ -67,11 +67,10 @@ class SearchCompany extends Component
 
   public function updatedFormSearchValue($value)
   {
-    // escape $value to avoid any security issue
-    $value = htmlspecialchars($value);
-    $endpoint = '';
+
     switch ($this->country) {
       case 'France':
+        $value = urlencode($value);
         // search companies in France with endpoint https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false
         $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false";
         // set the option value to siren
@@ -93,14 +92,17 @@ class SearchCompany extends Component
 
       // format the response to match the options format
       if (isset($response->json()['results'])) {
+
         $this->options = collect($response->json()['results'])->map(function ($option) {
+
           // transform the option to a flat array
           $option = Arr::dot($option);
           // set id to siren
           $option['id'] = $option['siren'];
           // set dirigeant to the first dirigeant
           $option['dirigeant'] = Arr::get($option, 'dirigeants.0.prenoms', '') . ' ' . Arr::get($option, 'dirigeants.0.nom', '');
-
+          // set activated
+          $option['activated'] = true;
           return $option;
         });
 

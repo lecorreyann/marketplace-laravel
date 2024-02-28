@@ -1,4 +1,4 @@
-<x-layout>
+<x-admin-layout>
     <div>
         @if (session('success'))
             <div class="alert alert-success">
@@ -9,7 +9,7 @@
                 @csrf
                 @method('PATCH')
                 {{-- permission.name --}}
-                <x-forms.input type="text" name="name" label="Name" value="{{ old('name', $permission->name) }}"
+                <x-input type="text" name="name" label="Name" value="{{ old('name', $permission->name) }}"
                     required="true" />
                 <button type="submit">Edit</button>
             </form>
@@ -18,4 +18,4 @@
 
     {{-- list --}}
     <a href="{{ route('admin.permissions.index') }}">Permissions</a>
-</x-layout>
+</x-admin-layout>

@@ -16,6 +16,14 @@ class PermissionPolicy
   }
 
   /**
+   * Determine user can list permision.
+   */
+  public function list(User $user): bool
+  {
+    return $user->hasOneRoleOf(['super admin', 'admin']) || $user->hasPermission('list permissions');
+  }
+
+  /**
    * Determine user can create permision.
    */
   public function create(User $user): bool

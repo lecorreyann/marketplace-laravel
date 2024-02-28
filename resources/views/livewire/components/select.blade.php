@@ -1,4 +1,4 @@
-<div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })" x-init="init()">
+<div x-data="select({ open: false, selected: null, focused: null, search: '', options: {{ $options->toJSON() }}, optionText: '{{ $optionText }}', optionValue: '{{ $optionValue }}' })">
 
     <label id="{{ $id }}" class="block text-sm font-medium leading-6 text-gray-900">{{ $label }}</label>
     <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()">
@@ -37,6 +37,8 @@
                 </svg>
             </span>
         </button>
+
+
 
         <template x-if="open">
             <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"

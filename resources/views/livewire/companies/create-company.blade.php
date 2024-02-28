@@ -27,21 +27,31 @@
                     :options="$countries" option-text="name" option-value="id" :type="App\Enums\SelectType::country" :disabled="false"
                     :disabledOptions="$countries->where('activated', false)->pluck('id')" @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
 
-                {{-- display country --}}
+                {{-- display company search --}}
 
-                @isset($form->country)
-                    @switch(App\Models\Country::find($form->country)->name)
-                        @case('France')
-                            <livewire:components.search-company label="Company"
-                                placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
-                                country="France" />
-                        @break
+                @if (!$form->companyName)
+                    @isset($form->country)
+                        @switch(App\Models\Country::find($form->country)['iso_3166-1_alpha-2'])
+                            @case('FX')
+                                <livewire:components.search-company label="Company"
+                                    placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
+                                    country="France" @updated-value="$dispatch('updated-company', {value: $event.detail.value})" />
+                            @break
 
-                        @default
-                        @break
-                    @endswitch
-                @endisset
+                            @default
+                            @break
+                        @endswitch
+                    @endisset
 
+                    {{-- display company details --}}
+                @else
+                    <x-input id="companyName" name="companyName" label="Company name" type="text"
+                        placeholder="Company name" wire:model="form.companyName" :disabled="true" />
+
+                    <x-input id="companyIdentifier" name="companyIdentifier"
+                        label="Company {{ $form->companyIdentifierType }}" type="text" placeholder="identifier"
+                        wire:model="form.companyIdentifier" :disabled="true" />
+                @endif
 
 
 

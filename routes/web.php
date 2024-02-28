@@ -78,18 +78,18 @@ Route::name('category.')->group(function () {
 Route::name('admin.')->prefix('/admin')->group(function () {
   // Category Routes (CRUD)
   Route::middleware([])->group(function () {
-    Route::get('/categories', [CategoryCRUDController::class, 'index'])->name('categories.index');
+    Route::get('/categories', [CategoryCRUDController::class, 'index'])->name('categories.index')->can('list', Category::class);
     Route::name('category.')->prefix('/categories')->group(function () {
-      Route::get('/create', [CategoryCRUDController::class, 'create'])->name('create')->can('create category', Category::class);
-      Route::post('/store', [CategoryCRUDController::class, 'store'])->name('store')->can('create category', Category::class);
-      Route::get('/{category}/edit', [CategoryCRUDController::class, 'edit'])->middleware(EnsureCategoryExists::class)->name('edit')->can('update category', Category::class);
-      Route::patch('/{category}/update', [CategoryCRUDController::class, 'update'])->middleware(EnsureCategoryExists::class)->name('update')->can('update category', Category::class);
-      Route::delete('/{category}/destroy', [CategoryCRUDController::class, 'destroy'])->name('destroy')->can('delete category', Category::class);
+      Route::get('/create', [CategoryCRUDController::class, 'create'])->name('create')->can('create', Category::class);
+      Route::post('/store', [CategoryCRUDController::class, 'store'])->name('store')->can('create', Category::class);
+      Route::get('/{category}/edit', [CategoryCRUDController::class, 'edit'])->middleware(EnsureCategoryExists::class)->name('edit')->can('update', Category::class);
+      Route::patch('/{category}/update', [CategoryCRUDController::class, 'update'])->middleware(EnsureCategoryExists::class)->name('update')->can('update', Category::class);
+      Route::delete('/{category}/destroy', [CategoryCRUDController::class, 'destroy'])->name('destroy')->can('delete', Category::class);
     });
   });
   // Role Routes (CRUD)
   Route::middleware([])->group(function () {
-    Route::get('/roles', [RoleCRUDController::class, 'index'])->name('roles.index');
+    Route::get('/roles', [RoleCRUDController::class, 'index'])->name('roles.index')->can('list', Role::class);
     Route::name('role.')->prefix('/roles')->group(function () {
       Route::get('/create', [RoleCRUDController::class, 'create'])->name('create')->can('create', Role::class);
       Route::post('/store', [RoleCRUDController::class, 'store'])->name('store')->can('create', Role::class);
@@ -100,7 +100,7 @@ Route::name('admin.')->prefix('/admin')->group(function () {
   });
   // Permission Routes (CRUD)
   Route::middleware([])->group(function () {
-    Route::get('/permissions', [PermissionCRUDController::class, 'index'])->name('permissions.index');
+    Route::get('/permissions', [PermissionCRUDController::class, 'index'])->name('permissions.index')->can('list', Permission::class);
     Route::name('permission.')->prefix('/permissions')->group(function () {
       Route::get('/create', [PermissionCRUDController::class, 'create'])->name('create')->can('create', Permission::class);
       Route::post('/store', [PermissionCRUDController::class, 'store'])->name('store')->can('create', Permission::class);
@@ -111,7 +111,7 @@ Route::name('admin.')->prefix('/admin')->group(function () {
   });
   // Country Routes (CRUD)
   Route::middleware([])->group(function () {
-    Route::get('/countries', [CountryCRUDController::class, 'index'])->name('countries.index');
+    Route::get('/countries', [CountryCRUDController::class, 'index'])->name('countries.index')->can('list', Country::class);;
     Route::name('country.')->prefix('/countries')->group(function () {
       Route::get('/{country}/edit', [CountryCRUDController::class, 'edit'])->middleware([EnsureCountryExists::class])->name('edit')->can('update', Country::class);
       Route::patch('/{country}/update', [CountryCRUDController::class, 'update'])->middleware([EnsureCountryExists::class])->name('update')->can('update', Country::class);

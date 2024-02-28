@@ -11,7 +11,7 @@
     <div class="relative mt-2 rounded-md shadow-sm">
         <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
             value="{{ old($name, isset($value) ? $value : '') }}"
-            @isset($autocomplete) autocomplete="{{ !!$autocomplete ? $autocomplete : null }}" @endisset
+            @isset($autocomplete) autocomplete="{{ !!$autocomplete ? $autocomplete : 'off' }}" @endisset
             placeholder="{{ $placeholder }}" @class([
                 'block w-full rounded-md border-0 py-1.5 ring-1 ring-inset focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6',
                 'text-gray-900 shadow-sm ring-gray-300 placeholder:text-gray-400  focus:ring-indigo-600' => $errors->missing(

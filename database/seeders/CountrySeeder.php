@@ -88,7 +88,7 @@ class CountrySeeder extends Seeder
       array('iso_3166-1_alpha-2' => 'FO', 'name' => 'Faroe Islands'),
       array('iso_3166-1_alpha-2' => 'FJ', 'name' => 'Fiji'),
       array('iso_3166-1_alpha-2' => 'FI', 'name' => 'Finland'),
-      array('iso_3166-1_alpha-2' => 'FR', 'name' => 'France', 'activated' => true),
+      //array('iso_3166-1_alpha-2' => 'FR', 'name' => 'France', 'activated' => true),
       array('iso_3166-1_alpha-2' => 'FX', 'name' => 'France, Metropolitan'),
       array('iso_3166-1_alpha-2' => 'GF', 'name' => 'French Guiana'),
       array('iso_3166-1_alpha-2' => 'PF', 'name' => 'French Polynesia'),

@@ -1,4 +1,4 @@
-<x-layout>
+<x-admin-layout>
     <div>
         @if (session('success'))
             <div class="alert alert-success">
@@ -21,4 +21,4 @@
 
     {{-- list --}}
     <a href="{{ route('admin.roles.index') }}">Roles</a>
-</x-layout>
+</x-admin-layout>
