@@ -17,6 +17,7 @@
 
 
 
+
         {{-- SEARCH FIELD --}}
         <div class="flex items-stretch">
             <div class="w-full">
@@ -44,7 +45,8 @@
         <template x-if="open && options.length > 0">
             <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
                 tabindex="1" role="listbox" aria-labelledby="{{ $id }}" id="{{ 'listbox-' . $id }}"
-                :aria-activedescendant="'listbox-option-' + focused" x-show="open" wire:loading.remove>
+                :aria-activedescendant="'listbox-option-' + focused" x-show="open"
+                x-on:scroll="if($event.target.scrollHeight - $event.target.scrollTop === $event.target.clientHeight) { loadMoreResults() }">
 
                 @foreach ($options as $index => $option)
                     <li @class([
@@ -127,8 +129,8 @@
                 optionTextBottomRight: config.optionTextBottomRight,
                 optionValue: config.optionValue,
                 listboxId: config.listboxId,
-                i: 0,
                 cleanup: null,
+
 
 
                 focusNextOption() {
@@ -295,6 +297,10 @@
                     } else {
                         return null;
                     }
+                },
+
+                loadMoreResults() {
+                    $wire.dispatch('search');
                 },
 
                 // watch this.search for changes

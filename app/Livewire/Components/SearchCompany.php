@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Livewire\Component;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Arr;
+use Livewire\Attributes\On;
 
 class SearchCompany extends Component
 {
@@ -24,8 +25,10 @@ class SearchCompany extends Component
   public Collection|null $options;
   public Collection|null $disabledOptions;
   public bool|null $disabled;
-  public string $country;
-  // the value of the search input
+  public string $country; // the page of the search results
+  public int|null $page; // the page of the search results
+  public string|null $resultsPerPage; // the number of results per page
+  public bool|null $infiniteScroll; // activate infinite scroll
 
   public function mount(
     $id,
@@ -42,6 +45,9 @@ class SearchCompany extends Component
     $optionTextBottomLeft = null,
     $optionTextTopRight = null,
     $optionTextBottomRight = null,
+    $page = 1,
+    $resultsPerPage = 10,
+    $infiniteScroll = true
   ) {
     $this->id = $id;
     $this->name = $name;
@@ -57,6 +63,9 @@ class SearchCompany extends Component
     $this->disabled = $disabled;
     $this->disabledOptions = $disabledOptions ? $disabledOptions : collect([]);
     $this->country = $country;
+    $this->page = $page;
+    $this->resultsPerPage = $resultsPerPage;
+    $this->infiniteScroll = $infiniteScroll;
   }
 
 
@@ -65,14 +74,28 @@ class SearchCompany extends Component
     return view('livewire.components.search-company');
   }
 
-  public function updatedFormSearchValue($value)
+
+  public function updatedFormSearchValue()
   {
+    // reset page
+    $this->page = 1;
+
+    // reset options
+    $this->options = collect([]);
+
+    $this->search();
+  }
+
+  #[On('search')]
+  public function search()
+  {
+
 
     switch ($this->country) {
       case 'France':
-        $value = urlencode($value);
+        $value = urlencode($this->form->searchValue);
         // search companies in France with endpoint https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false
-        $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false";
+        $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false&page=$this->page&per_page=$this->resultsPerPage";
         // set the option value to siren
         $this->optionValue = "siren";
         // set the option top left text to nom_complet
@@ -93,7 +116,8 @@ class SearchCompany extends Component
       // format the response to match the options format
       if (isset($response->json()['results'])) {
 
-        $this->options = collect($response->json()['results'])->map(function ($option) {
+        // merge the options
+        $this->options = $this->options->merge(collect($response->json()['results'])->map(function ($option) {
 
           // transform the option to a flat array
           $option = Arr::dot($option);
@@ -104,9 +128,12 @@ class SearchCompany extends Component
           // set activated
           $option['activated'] = true;
           return $option;
-        });
+        }));
 
         $this->dispatch('updated-options', options: $this->options);
+
+        // increment page
+        $this->page++;
       }
     }
   }
