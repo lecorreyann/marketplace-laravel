@@ -13,6 +13,24 @@ class Company extends Model
   use HasFactory;
 
   /**
+   * The table associated with the model.
+   */
+  protected $table = 'companies';
+
+  /**
+   * The attributes that are mass assignable.
+   *
+   * @var array<int, string>
+   */
+  protected $fillable = [
+    'name',
+    'identifier',
+    'identifier_type',
+    'address_id',
+    'user_id'
+  ];
+
+  /**
    * Get the user that owns the company.
    */
   public function user(): BelongsTo

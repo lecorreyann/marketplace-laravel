@@ -2,7 +2,6 @@
 
 // Path: routes/companies.php
 
-use App\Http\Middleware\EnsureUserHasCompany;
 use App\Livewire\Companies\CreateCompany;
 use Illuminate\Support\Facades\Route;
 

@@ -29,7 +29,7 @@
 
                 {{-- display company search --}}
 
-                @if (!$form->companyName)
+                @if (!$form->name)
                     @isset($form->country)
                         @switch(App\Models\Country::find($form->country)['iso_3166-1_alpha-2'])
                             @case('FX')
@@ -45,18 +45,25 @@
 
                     {{-- display company details --}}
                 @else
-                    <x-input id="companyName" name="companyName" label="Company name" type="text"
-                        placeholder="Company name" wire:model="form.companyName" :disabled="true" />
+                    <x-input id="name" name="name" label="Company name" type="text"
+                        placeholder="Company name" wire:model="form.name" :disabled="true" />
 
-                    <x-input id="companyIdentifier" name="companyIdentifier"
-                        label="Company {{ $form->companyIdentifierType }}" type="text" placeholder="identifier"
-                        wire:model="form.companyIdentifier" :disabled="true" />
+                    <x-input id="identifier" name="identifier" label="Company {{ $form->identifierType }}"
+                        type="text" placeholder="identifier" wire:model="form.identifier" :disabled="true" />
+
+                    <x-input id="address" name="address" label="Address" type="text" placeholder="Address"
+                        wire:model="form.address" :disabled="true" />
+
+                    <x-input id="postalCode" name="postalCode" label="Postal code" type="text"
+                        placeholder="Postal code" wire:model.blur="form.postalCode" :disabled="true" />
+
+                    <x-input id="city" name="city" label="City" type="text" placeholder="City"
+                        wire:model="form.city" :disabled="true" />
                 @endif
 
 
 
                 {{-- company.email --}}
-
                 <div>
                     <x-button type="submit" class="flex w-full justify-center leading-6">Register</x-button>
                 </div>

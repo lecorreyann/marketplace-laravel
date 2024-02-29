@@ -17,11 +17,11 @@ class EnsureCountryExists
   public function handle(Request $request, Closure $next): Response
   {
     // get country
-    $country = Country::find($request->route('country'));
+    $country = Country::find($request->route('id'));
 
     // if country does not exist
     if (!$country) {
-      return redirect()->route('admin.categories.index')->with('error', 'Country does not exist.');
+      return redirect()->route('admin.countries.index')->with('error', 'Country does not exist.');
     }
 
     return $next($request);

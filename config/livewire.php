@@ -40,6 +40,7 @@ return [
 
   'layout' => 'layouts.marketplace',
 
+
   /*
     |---------------------------------------------------------------------------
     | Lazy Loading Placeholder

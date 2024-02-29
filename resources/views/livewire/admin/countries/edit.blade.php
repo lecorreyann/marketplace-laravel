@@ -1,4 +1,4 @@
-<x-admin-layout>
+<div class="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
     <div>
         @if (session('success'))
             <div class="alert alert-success">
@@ -9,9 +9,9 @@
                 @csrf
                 @method('PATCH')
                 {{-- country.name --}}
-                <x-input type="text" name="name" label="Name" value="{{ old('name', $country->name) }}"
-                    :required="true" :readonly="true" id="name" />
-                <button type="submit">Edit</button>
+                <x-input type="text" name="name" id="name" label="Name" wire:model="name" :required="true"
+                    :readonly="true" id="name" />
+                <x-button type="submit">Edit</x-button>
                 {{-- country.activated --}}
                 <x-forms.checkbox name="activated" label="activated" :value="true" :checked="(bool) $country->activated === true ? true : false"
                     id="activated" />
@@ -21,4 +21,4 @@
 
     {{-- list --}}
     <a href="{{ route('admin.countries.index') }}">Countries</a>
-</x-admin-layout>
+</div>

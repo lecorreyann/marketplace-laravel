@@ -15,6 +15,10 @@ return new class extends Migration
       $table->id();
       // name
       $table->string('name');
+      // identifier
+      $table->string('identifier');
+      // type of identifier
+      $table->enum('identifier_type', ['siren']);
       // has one address
       $table->foreignId('address_id')->constrained();
       $table->timestamps();

@@ -12,8 +12,8 @@
     listboxId: '{{ 'listbox-' . $id }}'
 })">
 
-    <div class="relative mt-2" @keydown.escape="closeListOptions()" @click.away="closeListOptions()"
-        @keydown.arrow-down.prevent="focusNextOption()" @keydown.arrow-up.prevent="focusPreviousOption()">
+    <div class="relative mt-2" @keydown.escape="closeListOptions()" @keydown.arrow-down.prevent="focusNextOption()"
+        @keydown.arrow-up.prevent="focusPreviousOption()">
 
 
 
@@ -24,7 +24,7 @@
                 <x-input label="Company" name="search-value" id="search-value" type="text" :placeholder="$placeholder"
                     wire:model.live.debounce.500ms='form.searchValue' autocomplete="off"
                     @click="if(options.length > 0){ openListOptions() }" @keydown="handleKeyPress($event)"
-                    data-form-type="other" />
+                    data-form-type="other" @click.away="closeListOptions()" />
             </div>
             <div wire:loading.flex class="absolute bottom-[8px] right-0 flex self-end pr-4">
                 <svg class="h-5 w-5 animate-spin text-current" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -41,69 +41,67 @@
 
         {{-- OPTIONS --}}
 
+        <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+            tabindex="1" role="listbox" aria-labelledby="{{ $id }}" id="{{ 'listbox-' . $id }}"
+            :aria-activedescendant="'listbox-option-' + focused" x-show="open"
+            x-on:scroll="if($event.target.scrollHeight - $event.target.scrollTop === $event.target.clientHeight) { loadMoreResults() }">
 
-        <template x-if="open && options.length > 0">
-            <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                tabindex="1" role="listbox" aria-labelledby="{{ $id }}" id="{{ 'listbox-' . $id }}"
-                :aria-activedescendant="'listbox-option-' + focused" x-show="open"
-                x-on:scroll="if($event.target.scrollHeight - $event.target.scrollTop === $event.target.clientHeight) { loadMoreResults() }">
+            @foreach ($options as $index => $option)
+                <li @class([
+                    'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 flex justify-between gap-x-6 py-5 focus:outline-none focus:bg-indigo-600 focus:text-white group',
+                    'opacity-50' => $disabledOptions->contains($option[$optionValue]),
+                ]) id="listbox-option-{{ $index }}" role="option"
+                    @click="@if (!$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
+                    @keydown.enter.stop.prevent="@if (!$disabled && !$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
+                    @mouseover="setFocusedOption({{ $index }})" :key="{{ $option[$optionValue] }}"
+                    tabindex="1">
 
-                @foreach ($options as $index => $option)
-                    <li @class([
-                        'relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900 flex justify-between gap-x-6 py-5 focus:outline-none focus:bg-indigo-600 focus:text-white group',
-                        'opacity-50' => $disabledOptions->contains($option[$optionValue]),
-                    ]) id="listbox-option-{{ $index }}" role="option"
-                        @click="@if (!$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
-                        @keydown.enter.stop.prevent="@if (!$disabled && !$disabledOptions->contains($option[$optionValue])) setSelectedOption({{ $option[$optionValue] }}) @endif"
-                        @mouseover="setFocusedOption({{ $index }})" :key="{{ $option[$optionValue] }}"
-                        tabindex="1">
-
-                        <div class="flex min-w-0 gap-x-4 pl-3">
-                            <div class="min-w-0 flex-auto">
-                                {{-- Top Left Option Text --}}
-                                <p class="text-sm font-semibold leading-6">
-                                    <span class="absolute inset-x-0 -top-px bottom-0"></span>
-                                    {{ Arr::get($option, $optionTextTopLeft, '') }}
-                                </p>
-                                {{-- Bottom Left Option Text --}}
-                                <p class="mt-1 flex text-xs leading-5">
-                                    {{ Arr::get($option, $optionTextBottomLeft, '') }}
-                                </p>
-                            </div>
+                    <div class="flex min-w-0 gap-x-4 pl-3">
+                        <div class="min-w-0 flex-auto">
+                            {{-- Top Left Option Text --}}
+                            <p class="text-sm font-semibold leading-6">
+                                <span class="absolute inset-x-0 -top-px bottom-0"></span>
+                                {{ Arr::get($option, $optionTextTopLeft, '') }}
+                            </p>
+                            {{-- Bottom Left Option Text --}}
+                            <p class="mt-1 flex text-xs leading-5">
+                                {{ Arr::get($option, $optionTextBottomLeft, '') }}
+                            </p>
                         </div>
-                        <div class="flex shrink-0 items-center gap-x-4">
-                            <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                {{-- Top Right Option Text --}}
-                                <p class="text-sm leading-6">
-                                    {{ Arr::get($option, $optionTextTopRight, '') }}
-                                </p>
-                                {{-- Bottom Right Option Text --}}
-                                <p class="mt-1 text-xs leading-5">
-                                    {{ Arr::get($option, $optionTextBottomRight, '') }}
-                                </p>
-                            </div>
-
+                    </div>
+                    <div class="flex shrink-0 items-center gap-x-4">
+                        <div class="hidden sm:flex sm:flex-col sm:items-end">
+                            {{-- Top Right Option Text --}}
+                            <p class="text-sm leading-6">
+                                {{ Arr::get($option, $optionTextTopRight, '') }}
+                            </p>
+                            {{-- Bottom Right Option Text --}}
+                            <p class="mt-1 text-xs leading-5">
+                                {{ Arr::get($option, $optionTextBottomRight, '') }}
+                            </p>
                         </div>
 
-                        {{-- SVG SELECT INDICATOR --}}
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-4"
-                            :class="{
-                                'text-indigo-600': selected == {{ $option[$optionValue] }} && focused !=
-                                    {{ $index }},
-                                'group-focus:text-white': selected == {{ $option[$optionValue] }}
-                            }"
-                            x-show="selected == {{ $option[$optionValue] }}" id="listbox-option-{{ $index }}">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
-                                <path fill-rule="evenodd"
-                                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                    </li>
-                @endforeach
+                    </div>
 
-            </ul>
-        </template>
+                    {{-- SVG SELECT INDICATOR --}}
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-4"
+                        :class="{
+                            'text-indigo-600': selected == {{ $option[$optionValue] }} && focused !=
+                                {{ $index }},
+                            'group-focus:text-white': selected == {{ $option[$optionValue] }}
+                        }"
+                        x-show="selected == {{ $option[$optionValue] }}" id="listbox-option-{{ $index }}">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" :aria-hidden="selected === 1">
+                            <path fill-rule="evenodd"
+                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </li>
+            @endforeach
+
+        </ul>
+
 
 
 
@@ -210,7 +208,7 @@
                 },
 
                 openListOptions() {
-                    this.open = true
+                    if (this.options.length > 0) this.open = true
 
                 },
 
@@ -306,11 +304,7 @@
                 // watch this.search for changes
                 init() {
 
-
-
                     this.$watch('search', ((newValue, oldValue) => {
-
-
 
                         // Clear the previous timeout if it exists
                         if (this.resetTimeout) {

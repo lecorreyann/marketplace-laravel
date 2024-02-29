@@ -15,6 +15,15 @@ class CountryPolicy
     //
   }
 
+
+  /**
+   * Determine user can list countries.
+   */
+  public function list(User $user): bool
+  {
+    return $user->hasOneRoleOf(['super admin', 'admin']) || $user->hasPermission('list countries');
+  }
+
   /**
    * Determine user can update cuntry.
    */

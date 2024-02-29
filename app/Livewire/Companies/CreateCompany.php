@@ -5,7 +5,6 @@ namespace App\Livewire\Companies;
 use App\Enums\CompanyIdentifierType;
 use Livewire\Component;
 use App\Livewire\Forms\CreateCompanyForm;
-use App\Models\Company;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\On;
 use App\Models\Country;
@@ -24,7 +23,7 @@ class CreateCompany extends Component
   public function mount()
   {
     $this->countries = Country::all();
-    $this->form->setCompanyName('');
+    $this->form->setName('');
   }
 
 
@@ -40,9 +39,12 @@ class CreateCompany extends Component
   {
     $country = Country::find($this->form->country);
     if ($country['iso_3166-1_alpha-2'] === 'FX') {
-      $this->form->companyName = $value['nom_complet'];
-      $this->form->companyIdentifier = $value['siren'];
-      $this->form->companyIdentifierType = CompanyIdentifierType::siren;
+      $this->form->name = $value['nom_complet'];
+      $this->form->identifier = $value['siren'];
+      $this->form->identifierType = CompanyIdentifierType::siren;
+      $this->form->address = $value['siege.numero_voie'] . ' ' . $value['siege.type_voie'] . ' ' . $value['siege.libelle_voie'];
+      $this->form->city = $value['siege.libelle_commune'];
+      $this->form->postalCode = $value['siege.code_postal'];
     }
   }
 }
