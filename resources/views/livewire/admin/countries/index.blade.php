@@ -14,13 +14,15 @@
             <table>
                 <thead>
                     <th>Name</th>
-                    <th>Activated</th>
+                    <th>Create company (select country)</th>
+                    <th>Create company (input phone)</th>
                     <th>Actions</th>
                 <tbody>
                     @foreach ($countries as $country)
                         <tr>
                             <td>{{ $country->name }}</td>
-                            <td>{{ $country->activated }}</td>
+                            <td>{{ $country->create_company_select_country_enable }}</td>
+                            <td>{{ $country->create_company_input_phone_enable }}</td>
                             <td>
                                 <a href="{{ route('admin.country.edit', $country->id) }}">Edit</a>
                         </tr>

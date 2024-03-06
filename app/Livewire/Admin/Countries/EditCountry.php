@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Countries;
 
+use App\Livewire\Forms\EditCountryForm;
 use Livewire\Component;
 use App\Models\Country;
 use Livewire\Attributes\Layout;
@@ -9,30 +10,21 @@ use Livewire\Attributes\Layout;
 #[Layout('layouts.admin')]
 class EditCountry extends Component
 {
-  public $country;
-  public $name;
+
+  public EditCountryForm $form;
+
+
+
 
   public function mount($id)
   {
-    $this->country = Country::find($id);
-    $this->name = $this->country->name;
+    $this->form->setCountry(Country::find($id));
   }
 
   public function update()
   {
-    $this->validate([
-      'name' => 'required',
-      'code' => 'required',
-    ]);
-
-    $this->country->update([
-      'name' => $this->name,
-      'code' => $this->code,
-    ]);
-
-    session()->flash('message', 'Country updated successfully.');
-
-    return redirect()->route('admin.countries.index');
+    $this->form->update();
+    return redirect()->route('admin.country.edit', $this->form->country->id)->with('success', 'Country updated successfully');
   }
 
   public function render()

@@ -4,7 +4,7 @@ namespace App\Livewire\Forms;
 
 use App\Enums\CompanyIdentifierType;
 use App\Models\Country;
-use Livewire\Attributes\Rule;
+use Illuminate\Support\Collection;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -14,7 +14,7 @@ class CreateCompanyForm extends Form
    * @var string $country The country of the company. This field is required.
    */
   #[Validate]
-  public string $country;
+  public Collection $country;
 
   #[Validate]
   public string $name;
@@ -42,6 +42,11 @@ class CreateCompanyForm extends Form
     $this->name = $value;
   }
 
+  public function setIdentifier(string $value)
+  {
+    $this->identifier = $value;
+  }
+
   public function rules()
   {
     $rules = [
@@ -54,8 +59,8 @@ class CreateCompanyForm extends Form
       'postalCode' => ['required'],
       'phone' => ['required']
     ];
-    $country = Country::find($this->country);
-    if ($country['iso_3166-1_alpha-2'] == 'FX') {
+
+    if ($this->country['iso_3166-1_alpha-2'] == 'FX') {
       $rules['postalCode'][] = 'digits:5';
     }
 

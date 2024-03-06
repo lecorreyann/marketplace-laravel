@@ -6,5 +6,5 @@ namespace App\Enums;
 
 enum CompanyIdentifierType: string
 {
-  case siren = 'siren';
+  case siret = 'siret';
 }

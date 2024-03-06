@@ -21,6 +21,7 @@ class Country extends Model
    * @var array<int, string>
    */
   protected $fillable = [
-    'activated'
+    'create_company_select_country_enable',
+    'create_company_input_phone_enable'
   ];
 }

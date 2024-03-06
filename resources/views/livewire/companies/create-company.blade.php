@@ -22,20 +22,23 @@
         <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
             <form class="space-y-6">
 
+
                 {{-- company.country --}}
                 <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country"
                     :options="$countries" option-text="name" option-value="id" :type="App\Enums\SelectType::country" :disabled="false"
-                    :disabledOptions="$countries->where('activated', false)->pluck('id')" @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
+                    :disabledOptions="$disabledCountries" @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
 
                 {{-- display company search --}}
 
+
+
                 @if (!$form->name)
                     @isset($form->country)
-                        @switch(App\Models\Country::find($form->country)['iso_3166-1_alpha-2'])
+                        @switch($form->country['iso_3166-1_alpha-2'])
                             @case('FX')
                                 <livewire:components.search-company label="Company"
                                     placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
-                                    country="France" @updated-value="$dispatch('updated-company', {value: $event.detail.value})" />
+                                    country="France" @updated-value="$dispatch('select-company', {value: $event.detail.value})" />
                             @break
 
                             @default
@@ -45,7 +48,26 @@
 
                     {{-- display company details --}}
                 @else
+                    {{-- company.name --}}
                     <x-input id="name" name="name" label="Company name" type="text"
+                        placeholder="Company name" wire:model="form.name" :disabled="true" />
+
+
+                    {{-- company.address --}}
+                    <livewire:components.select id="address" name="address" label="Establishment address"
+                        placeholder="Select an address" :options="$addresses" option-text="address" option-value="id"
+                        :type="App\Enums\SelectType::address" :disabled="false"
+                        @updated-value="$dispatch('select-address', {value: $event.detail.value})" :otherOptionEnabled="true" />
+
+
+                    @if (!!$form->identifier)
+                        {{-- company.identifier --}}
+                        <x-input id="identifier" name="identifier" label="Company {{ $form->identifierType }}"
+                            type="text" placeholder="identifier" wire:model="form.identifier" :disabled="true" />
+                    @endif
+
+
+                    {{-- <x-input id="name" name="name" label="Company name" type="text"
                         placeholder="Company name" wire:model="form.name" :disabled="true" />
 
                     <x-input id="identifier" name="identifier" label="Company {{ $form->identifierType }}"
@@ -58,12 +80,18 @@
                         placeholder="Postal code" wire:model.blur="form.postalCode" :disabled="true" />
 
                     <x-input id="city" name="city" label="City" type="text" placeholder="City"
-                        wire:model="form.city" :disabled="true" />
+                        wire:model="form.city" :disabled="true" /> --}}
                 @endif
 
 
 
                 {{-- company.email --}}
+
+                {{-- company.phone --}}
+                {{-- <livewire:components.input-phone selectId="inputPhoneCountry" selectName="inputPhoneCountry"
+                    inputName="phone" inputId="phone" label="Company phone" /> --}}
+
+                {{-- company.website --}}
                 <div>
                     <x-button type="submit" class="flex w-full justify-center leading-6">Register</x-button>
                 </div>
