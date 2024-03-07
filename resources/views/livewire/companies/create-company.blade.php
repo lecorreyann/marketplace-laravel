@@ -26,12 +26,9 @@
                 {{-- company.country --}}
                 <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country"
                     :options="$countries" option-text="name" option-value="id" :type="App\Enums\SelectType::country" :disabled="false"
-                    :disabledOptions="$disabledCountries" @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
+                    @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
 
                 {{-- display company search --}}
-
-
-
                 @if (!$form->name)
                     @isset($form->country)
                         @switch($form->country['iso_3166-1_alpha-2'])
@@ -59,6 +56,12 @@
                         :type="App\Enums\SelectType::address" :disabled="false"
                         @updated-value="$dispatch('select-address', {value: $event.detail.value})" :otherOptionEnabled="true" />
 
+                    {{ dump($form->address) }}
+
+                    @if ($form->address === 'other')
+                        <x-input id="address" name="address" label="Address" type="text" placeholder="Address"
+                            wire:model="form.address" :disabled="true" />
+                    @endif
 
                     @if (!!$form->identifier)
                         {{-- company.identifier --}}

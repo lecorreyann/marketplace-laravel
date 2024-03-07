@@ -37,15 +37,7 @@ class CreateCompanyForm extends Form
   #[Validate]
   public string $phone;
 
-  public function setName(string $value)
-  {
-    $this->name = $value;
-  }
 
-  public function setIdentifier(string $value)
-  {
-    $this->identifier = $value;
-  }
 
   public function rules()
   {

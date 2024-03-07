@@ -21,11 +21,10 @@ class Select extends Component
   public Collection|SupportCollection $options;
   public SelectType|null $type;
   public bool $disabled;
-  public mixed $disabledOptions = null;
   public bool $otherOptionEnabled = false; // if true, the select will have an "other" option
   public mixed $selectedOption = null;
 
-  public function mount($id, $label, $options,  $optionText, $optionValue, $placeholder, $disabled = false, $otherOptionEnabled = false, $disabledOptions = null, $name = null, $class = null, $type = null, $selectedOption = null)
+  public function mount($id, $label, $options,  $optionText, $optionValue, $placeholder, $disabled = false, $otherOptionEnabled = false, $name = null, $class = null, $type = null, $selectedOption = null)
   {
     $this->id = $id;
     $this->name = $name;
@@ -37,7 +36,6 @@ class Select extends Component
     $this->placeholder = $placeholder;
     $this->type = $type;
     $this->disabled = $disabled;
-    $this->disabledOptions = $disabledOptions === null ? collect([]) : $disabledOptions;
     $this->otherOptionEnabled = $otherOptionEnabled;
     $this->selectedOption = $selectedOption;
 
@@ -57,7 +55,8 @@ class Select extends Component
   #[On('updated-value')]
   public function setSelectedOption($value)
   {
-    if (!$this->disabledOptions->containsStrict($value)) {
+    $value = (object) $value;
+    if ($value->disabled && $value->disabled === false) {
       $this->selectedOption = $value;
     }
   }

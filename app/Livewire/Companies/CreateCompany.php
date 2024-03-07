@@ -28,9 +28,17 @@ class CreateCompany extends Component
   public function mount()
   {
     $this->countries = Country::all();
-    $this->disabledCountries = $this->countries->where('create_company_select_country_enable', false);
-    $this->form->setName('');
-    $this->form->setIdentifier('');
+    // disable countries that are not allowed to create a company
+    $this->countries = $this->countries->map(function ($item) {
+      $item->disabled = false;
+      if ($item->create_company_select_country_enable == false) {
+        $item->disabled = true;
+      }
+      return $item;
+    });
+    $this->form->name = '';
+    $this->form->identifier = '';
+    $this->form->address = '';
   }
 
 

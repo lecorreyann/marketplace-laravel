@@ -36,40 +36,40 @@
             </span>
         </button>
 
-        <template x-if="open">
-            {{-- options --}}
-            <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
-                x-ref="options">
-                <template x-for="(option, index) in options" :key="index">
-                    <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
-                        :class="{
-                            'bg-indigo-600 text-white': focusedOption ===
-                                index,
-                            'font-semibold': selectedOption === index
-                        }"
-                        @mouseover="setFocusedOption(index)" @click="setSelectedOption(index)">
-                        <div class="flex items-center gap-3">
-                            <template x-if="type === 'country'">
-                                <img :src="getFlag(option)" alt="flag" class="h-5 w-5 rounded-full">
-                            </template>
-                            <span x-text="option[optionText]"></span>
-                        </div>
-                        <span class="absolute inset-y-0 right-0 flex items-center pr-4"
-                            x-show="selectedOption === index"
-                            :class="focusedOption ===
-                                index ? 'text-white' : 'text-indigo-600'"
-                            :id="'listbox-option-' + index">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
-                                :aria-hidden="selectedOption === 1">
-                                <path fill-rule="evenodd"
-                                    d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                    </li>
-                </template>
-            </ul>
-        </template>
+
+        {{-- options --}}
+        <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+            x-ref="options" x-show="open">
+            <template x-for="(option, index) in options" :key="index">
+                <li class="relative cursor-default select-none py-2 pl-3 pr-9 text-gray-900"
+                    :class="{
+                        'bg-indigo-600 text-white': focusedOption ===
+                            index,
+                        'font-semibold': selectedOption === index,
+                        'opacity-50': (option['disabled'] && option['disabled'] === true)
+                    }"
+                    @mouseover="setFocusedOption(index)" @click="setSelectedOption(index)">
+                    <div class="flex items-center gap-3">
+                        <template x-if="type === 'country'">
+                            <img :src="getFlag(option)" alt="flag" class="h-5 w-5 rounded-full">
+                        </template>
+                        <span x-text="option[optionText]"></span>
+                    </div>
+                    <span class="absolute inset-y-0 right-0 flex items-center pr-4" x-show="selectedOption === index"
+                        :class="focusedOption ===
+                            index ? 'text-white' : 'text-indigo-600'"
+                        :id="'listbox-option-' + index">
+                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"
+                            :aria-hidden="selectedOption === 1">
+                            <path fill-rule="evenodd"
+                                d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </span>
+                </li>
+            </template>
+        </ul>
+
     </div>
 </div>
 
@@ -196,12 +196,21 @@
                 },
 
                 setSelectedOption(index) {
-                    this.selectedOption = index
-                    // wire
-                    $wire.dispatch('updated-value', {
-                        value: this.options[index]
-                    });
-                    // launch click on focus button
+
+                    // if option is disabled
+                    if (this.options[index]['disabled'] && this.options[index]['disabled'] === true) return null;
+
+                    // if selected option is different
+                    if (this.selectedOption !== index) {
+                        this.selectedOption = index
+                        // wire
+                        $wire.dispatch('updated-value', {
+                            value: this.options[index]
+                        });
+
+
+                    }
+                    // launch click on focus button to close the options
                     this.$refs.button.click()
                 },
 
@@ -218,6 +227,8 @@
 
                     return `{{ Vite::asset('resources/img/flags/') }}${countryCode}.svg`;
                 },
+
+
                 init() {
 
                     this.$watch('search', ((newValue, oldValue) => {
@@ -233,6 +244,8 @@
                                 this.search = '';
                             }
                         }, 500);
+
+
                     }))
                 }
             }
