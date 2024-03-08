@@ -3,6 +3,8 @@
 
     <div class="sm:mx-auto sm:w-full sm:max-w-md">
 
+
+
         @if (session()->has('success') || session()->has('success.title') || session()->has('success.message'))
             <x-session />
         @else
@@ -20,81 +22,52 @@
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-[720px]">
         <div class="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
-            <form class="space-y-6">
+            <form class="space-y-6" wire:submit='save'>
+
 
 
                 {{-- company.country --}}
                 <livewire:components.select id="country" name="country" label="Country" placeholder="Select a country"
                     :options="$countries" option-text="name" option-value="id" :type="App\Enums\SelectType::country" :disabled="false"
-                    @updated-value="$dispatch('updated-country', {value: $event.detail.value})" />
+                    @updated-value="$dispatch('updated-country', {value: $event.detail.value})" :key="count($countries)" />
 
-                {{-- display company search --}}
-                @if (!$form->name)
-                    @isset($form->country)
-                        @switch($form->country['iso_3166-1_alpha-2'])
-                            @case('FX')
-                                <livewire:components.search-company label="Company"
-                                    placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
-                                    country="France" @updated-value="$dispatch('select-company', {value: $event.detail.value})" />
-                            @break
-
-                            @default
-                            @break
-                        @endswitch
-                    @endisset
-
-                    {{-- display company details --}}
-                @else
-                    {{-- company.name --}}
-                    <x-input id="name" name="name" label="Company name" type="text"
-                        placeholder="Company name" wire:model="form.name" :disabled="true" />
+                @isset($form->country)
+                    @switch($form->country['iso_3166-1_alpha-2'])
+                        @case('FX')
+                            <livewire:components.search-company label="Search company"
+                                placeholder="Entreprise, N° SIREN, Dirigeant, Mot-clé..." id="company" option-value="id"
+                                country="France" @updated-value="$dispatch('select-company', {value: $event.detail.value})" />
+                        @break
+                    @endswitch
+                @endisset
 
 
-                    {{-- company.address --}}
-                    <livewire:components.select id="address" name="address" label="Establishment address"
+                @isset($form->name)
+                    <x-input id="name" name="name" type="text" label="Company name" placeholder="Company name"
+                        wire:model='form.name' :readonly="true" />
+                @endisset
+
+
+
+                @if (isset($addresses) && count($addresses) > 0)
+                    <livewire:components.select id="address" name="address" label="Select address"
                         placeholder="Select an address" :options="$addresses" option-text="address" option-value="id"
                         :type="App\Enums\SelectType::address" :disabled="false"
-                        @updated-value="$dispatch('select-address', {value: $event.detail.value})" :otherOptionEnabled="true" />
-
-                    {{ dump($form->address) }}
-
-                    @if ($form->address === 'other')
-                        <x-input id="address" name="address" label="Address" type="text" placeholder="Address"
-                            wire:model="form.address" :disabled="true" />
-                    @endif
-
-                    @if (!!$form->identifier)
-                        {{-- company.identifier --}}
-                        <x-input id="identifier" name="identifier" label="Company {{ $form->identifierType }}"
-                            type="text" placeholder="identifier" wire:model="form.identifier" :disabled="true" />
-                    @endif
-
-
-                    {{-- <x-input id="name" name="name" label="Company name" type="text"
-                        placeholder="Company name" wire:model="form.name" :disabled="true" />
-
-                    <x-input id="identifier" name="identifier" label="Company {{ $form->identifierType }}"
-                        type="text" placeholder="identifier" wire:model="form.identifier" :disabled="true" />
-
-                    <x-input id="address" name="address" label="Address" type="text" placeholder="Address"
-                        wire:model="form.address" :disabled="true" />
-
-                    <x-input id="postalCode" name="postalCode" label="Postal code" type="text"
-                        placeholder="Postal code" wire:model.blur="form.postalCode" :disabled="true" />
-
-                    <x-input id="city" name="city" label="City" type="text" placeholder="City"
-                        wire:model="form.city" :disabled="true" /> --}}
+                        @updated-value="$dispatch('select-address', {value: $event.detail.value})" :otherOptionEnabled="true"
+                        :key="substr(bin2hex(serialize($addresses[0])), -10)" />
                 @endif
 
+                @if ($customAddress)
+                    <x-input id="address" name="address" type="text" label="Company address" placeholder="Address"
+                        wire:model='form.address' autocomplete="street-address" />
+                @endif
 
+                @isset($form->identifier)
+                    <x-input id="identifier" name="identifier" type="text"
+                        label="{{ Str::ucfirst($form->identifierType->value) }}" placeholder="Identifier"
+                        wire:model.blur='form.identifier' />
+                @endisset
 
-                {{-- company.email --}}
-
-                {{-- company.phone --}}
-                {{-- <livewire:components.input-phone selectId="inputPhoneCountry" selectName="inputPhoneCountry"
-                    inputName="phone" inputId="phone" label="Company phone" /> --}}
-
-                {{-- company.website --}}
                 <div>
                     <x-button type="submit" class="flex w-full justify-center leading-6">Register</x-button>
                 </div>

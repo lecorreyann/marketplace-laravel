@@ -12,7 +12,7 @@
         {{-- search --}}
         <div class="flex items-stretch">
             <div class="w-full">
-                <x-input label="Company" name="search-value" id="search-value" type="text" :placeholder="$placeholder"
+                <x-input :label="$label" name="search-value" id="search-value" type="text" :placeholder="$placeholder"
                     wire:model.live.debounce.500ms='form.searchValue' autocomplete="off" @click="toggle"
                     data-form-type="other" x-ref="input" @keydown.arrow-down.prevent="handleArrowDown"
                     @keydown.arrow-up.prevent="handleArrowUp" @keydown.enter.stop.prevent="handleEnter" />
@@ -41,7 +41,8 @@
                     :class="{
                         'bg-indigo-600 text-white': focusedOption ===
                             index,
-                        'font-semibold': selectedOption === index
+                        'font-semibold': selectedOption === index,
+                        'opacity-50': (option['disabled'] && option['disabled'] === true)
                     }"
                     @mouseover="setFocusedOption(index)" @click="setSelectedOption(index)">
                     <div class="flex min-w-0 gap-x-4 pl-3">
@@ -217,7 +218,7 @@
                     if (this.selectedOption !== index) {
                         this.selectedOption = index
                         // wire
-                        $wire.dispatch('updated-value', {
+                        $wire.dispatchSelf('updated-value', {
                             value: this.options[index]
                         });
 

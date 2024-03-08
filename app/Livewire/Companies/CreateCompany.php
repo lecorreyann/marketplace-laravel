@@ -19,58 +19,60 @@ class CreateCompany extends Component
 {
   public CreateCompanyForm $form;
 
-  public Collection $countries;
+
   public Collection $disabledCountries;
   public SupportCollection $addresses; // the addresses of establishments
   public bool $customAddress = false;
+  public Collection $countries;
 
 
   public function mount()
   {
-    $this->countries = Country::all();
-    // disable countries that are not allowed to create a company
-    $this->countries = $this->countries->map(function ($item) {
-      $item->disabled = false;
-      if ($item->create_company_select_country_enable == false) {
-        $item->disabled = true;
-      }
-      return $item;
+    $this->countries = Country::all()->map(function (Country $country) {
+      $country->disabled = $country->create_company_select_country_enable == false ? true : false;
+      return $country;
     });
-    $this->form->name = '';
-    $this->form->identifier = '';
-    $this->form->address = '';
   }
-
 
   #[On('updated-country')]
   public function updatedCountry($value)
   {
-    //
     $this->form->country = collect($value);
   }
 
   #[On('select-company')]
   public function selectCompany($value)
   {
-    $country = $this->form->country;
 
-    if ($country['iso_3166-1_alpha-2'] === 'FX') {
-      $this->form->name = $value['nom_complet'];
-      $this->form->identifierType = CompanyIdentifierType::siret;
-      $establishments = collect(Arr::undot($value)['matching_etablissements']);
-      // keep only adresse and siret from etablissements and add id to each item
-      $this->addresses = $establishments->map(function ($item, $key) {
-        $item['id'] = $key;
-        $item['address'] = $item['adresse'];
-        $item['identifier'] = $item['siret'];
-        $item = Arr::only($item, ['identifier', 'address', 'id']);
-        // return $item to object to be able to use it in the view
-        return (object) $item;
-      });
-      // $this->form->address = $value['siege.numero_voie'] . ' ' . $value['siege.type_voie'] . ' ' . $value['siege.libelle_voie'];
-      // $this->form->city = $value['siege.libelle_commune'];
-      // $this->form->postalCode = $value['siege.code_postal'];
+    // reset the addresses
+    $this->reset('addresses');
+
+    // set the form values
+    switch ($this->form->country['iso_3166-1_alpha-2']) {
+
+      case 'FX':
+        $this->form->name = $value['nom_complet'];
+        $this->form->identifierType = CompanyIdentifierType::siret;
+        $establishments = collect(Arr::undot($value)['matching_etablissements']);
+        // keep only adresse and siret from etablissements and add id to each item
+        $this->addresses = $establishments->map(function ($item, $key) {
+          $item['id'] = $key;
+          $item['address'] = $item['adresse'];
+          $item['identifier'] = $item['siret'];
+          $item = Arr::only($item, ['identifier', 'address', 'id']);
+          // return $item to object to be able to use it in the view
+          return (object) $item;
+        });
+        break;
+      default:
+        break;
     }
+
+    // $this->form->address = $value['siege.numero_voie'] . ' ' . $value['siege.type_voie'] . ' ' . $value['siege.libelle_voie'];
+    // $this->form->city = $value['siege.libelle_commune'];
+    // $this->form->postalCode = $value['siege.code_postal'];
+
+
   }
 
   #[On('select-address')]
@@ -85,5 +87,15 @@ class CreateCompany extends Component
       $this->form->address = $value->address;
       $this->form->identifier = $value->identifier;
     }
+  }
+
+
+  public function save()
+  {
+
+    $this->form->validate();
+
+
+    //return redirect()->to('/posts');
   }
 }

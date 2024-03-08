@@ -6,10 +6,12 @@
     placeholder: @entangle('placeholder'),
     type: @entangle('type')
 })">
+
     {{-- label --}}
     <x-label :for="$id" :label="$label" />
 
-    <div class="relative mt-2" @click.away="open = false">
+
+    <div class="relative mt-2" @click.away="if(open) open = false">
         {{-- select --}}
         <button type="button"
             class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm sm:leading-6"
@@ -35,7 +37,6 @@
                 </template>
             </span>
         </button>
-
 
         {{-- options --}}
         <ul class="absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
@@ -69,7 +70,6 @@
                 </li>
             </template>
         </ul>
-
     </div>
 </div>
 
@@ -197,39 +197,47 @@
 
                 setSelectedOption(index) {
 
+
                     // if option is disabled
                     if (this.options[index]['disabled'] && this.options[index]['disabled'] === true) return null;
 
                     // if selected option is different
-                    if (this.selectedOption !== index) {
-                        this.selectedOption = index
-                        // wire
-                        $wire.dispatch('updated-value', {
-                            value: this.options[index]
-                        });
+                    // if (this.selectedOption !== index) {
+                    this.selectedOption = index
+                    // wire
+                    $wire.dispatchSelf('updated-value', {
+                        value: this.options[index]
+                    });
 
 
-                    }
+                    // }
                     // launch click on focus button to close the options
                     this.$refs.button.click()
                 },
 
                 getFlag(option) {
 
-                    let countryCode = option['iso_3166-1_alpha-2'].toLowerCase();
-                    if (countryCode === 'ty') {
-                        countryCode = 'fr';
-                    } else if (countryCode === 'fx') {
-                        countryCode = 'fr';
-                    } else if (countryCode === 'tp') {
-                        countryCode = 'tl';
-                    }
 
-                    return `{{ Vite::asset('resources/img/flags/') }}${countryCode}.svg`;
+                    let countryCode = option['iso_3166-1_alpha-2']
+                    if (countryCode) {
+                        countryCode = countryCode.toLowerCase();
+
+                        if (countryCode === 'ty') {
+                            countryCode = 'fr';
+                        } else if (countryCode === 'fx') {
+                            countryCode = 'fr';
+                        } else if (countryCode === 'tp') {
+                            countryCode = 'tl';
+                        }
+
+                        return `{{ Vite::asset('resources/img/flags/') }}${countryCode}.svg`;
+                    }
                 },
 
 
                 init() {
+
+                    console.log(this.options)
 
                     this.$watch('search', ((newValue, oldValue) => {
 

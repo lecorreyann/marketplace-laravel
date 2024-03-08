@@ -5,6 +5,8 @@ namespace App\Livewire\Components;
 use App\Enums\SelectType;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Modelable;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -38,7 +40,16 @@ class Select extends Component
     $this->disabled = $disabled;
     $this->otherOptionEnabled = $otherOptionEnabled;
     $this->selectedOption = $selectedOption;
+  }
 
+  public function updatedOptions()
+  {
+    dump('ici');
+  }
+
+  #[Computed]
+  public function options()
+  {
     if ($this->otherOptionEnabled === true) {
       $optionValue = count($this->options) + 1;
       if ($this->optionValue !== 'id') {
@@ -49,14 +60,14 @@ class Select extends Component
         $this->optionValue => $optionValue
       ]);
     }
+    return $this->options;
   }
 
   // update selected option
   #[On('updated-value')]
   public function setSelectedOption($value)
   {
-    $value = (object) $value;
-    if ($value->disabled && $value->disabled === false) {
+    if (!isset($value->disabled) || (isset($value->disabled) && $value->disabled === false)) {
       $this->selectedOption = $value;
     }
   }

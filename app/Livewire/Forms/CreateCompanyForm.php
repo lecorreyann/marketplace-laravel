@@ -54,7 +54,9 @@ class CreateCompanyForm extends Form
 
     if ($this->country['iso_3166-1_alpha-2'] == 'FX') {
       $rules['postalCode'][] = 'digits:5';
+      $rules['identifier'][] = 'digits:14';
     }
+
 
     return $rules;
   }

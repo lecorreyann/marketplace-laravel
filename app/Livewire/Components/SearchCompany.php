@@ -90,12 +90,10 @@ class SearchCompany extends Component
   public function search()
   {
 
-
     switch ($this->country) {
       case 'France':
-        $value = urlencode($this->form->searchValue);
-        // search companies in France with endpoint https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false
-        $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false&page=$this->page&per_page=$this->resultsPerPage";
+        // search companies in France
+        $this->searchFrance();
         // set the option value to siren
         $this->optionValue = "siren";
         // set the option top left text to nom_complet
@@ -110,31 +108,64 @@ class SearchCompany extends Component
       default:
         break;
     }
-    if ($endpoint) {
-      $response = Http::get($endpoint);
+  }
 
-      // format the response to match the options format
-      if (isset($response->json()['results'])) {
+  private function searchFrance()
+  {
+    $value = urlencode($this->form->searchValue);
+    // search companies in France with endpoint https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false
+    $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false&page=$this->page&per_page=$this->resultsPerPage";
+    // handle the response
+    $this->handleResponseSearchFrance($endpoint);
+  }
 
-        // merge the options
-        $this->options = $this->options->merge(collect($response->json()['results'])->map(function ($option) {
+  private function handleResponseSearchFrance(string $endpoint)
+  {
 
-          // transform the option to a flat array
-          $option = Arr::dot($option);
-          // set id to siren
-          $option['id'] = $option['siren'];
-          // set dirigeant to the first dirigeant
-          $option['dirigeant'] = Arr::get($option, 'dirigeants.0.prenoms', '') . ' ' . Arr::get($option, 'dirigeants.0.nom', '');
-          // set activated
-          $option['activated'] = true;
-          return $option;
-        }));
+    $response = Http::get($endpoint);
+    $response = $response->json();
+    $results = null;
 
-        $this->dispatch('updated-options', options: $this->options);
+    if (isset($response['results'])) {
+      $results = $response['results'];
+    }
 
-        // increment page
-        $this->page++;
-      }
+    if (
+      isset($response['total_results']) &&
+      $response['total_results'] === 1 &&
+      isset($results) &&
+      isset($results[0]['matching_etablissements']) &&
+      count($results[0]['matching_etablissements']) === 0
+    ) {
+
+      // research by 'nom_complet'
+      $value = urlencode($results[0]['nom_complet']);
+      $endpoint = "https://recherche-entreprises.api.gouv.fr/search?q=$value&minimal=false&page=$this->page&per_page=$this->resultsPerPage&exact_match=true";
+      return $this->handleResponseSearchFrance($endpoint);
+    }
+
+    // format the response to match the options format
+    if ($results) {
+
+
+      // merge the options
+      $this->options = $this->options->merge(collect($results)->map(function ($option) {
+
+        // transform the option to a flat array
+        $option = Arr::dot($option);
+        // set id to siren
+        $option['id'] = $option['siren'];
+        // set dirigeant to the first dirigeant
+        $option['dirigeant'] = Arr::get($option, 'dirigeants.0.prenoms', '') . ' ' . Arr::get($option, 'dirigeants.0.nom', '');
+        // set activated
+        $option['disabled'] = Arr::get($option, 'etat_administratif', '') === 'A' ? false : true;
+        return $option;
+      }));
+
+      $this->dispatch('updated-options', options: $this->options);
+
+      // increment page
+      $this->page++;
     }
   }
 }
